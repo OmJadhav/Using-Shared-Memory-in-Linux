@@ -1,0 +1,23 @@
+only a single client is (usually) writing to each memory location and the server is only reading (not writing)
+
+if the server happens to occasionally read data that is not up-to-date, that is okay, since the data is just usage statistics (and not your bank account). The only time you will need to worry about mutual exclusion will be when clients are first starting and when they exit.
+
+
+server process 
+
+- key for shared mem
+
+ - shmat routine To attach this shared memory segment to the server's address space, you will use the shmat() routine.
+
+- So that the client and the server agree on the format of the shared memory segment, you will need to define a structure for each client's statistics. The details of this structure are up to you. We suggest treating the shared memory segment as an array of these structures.
+- When a client terminates, it must reset its entry in the shared memory page so that the entry can be used by another client later.
+-To ensure that only one client at a time is searching through and modifying the essential structures of the shared memory segment, you should use a semaphore to provide mutual exclusion across both stat_init() and stat_unlink() (described below)..
+
+When your server terminates, you will need to ensure that it correctly removes the shared memory segment and semaphore so that each resource does not remain allocated forever. Look into shmctl() with cmd=IPC_RMID and sem_unlink to delete these resources. How do you find out when your server terminates, given that it runs in an infinite loop? See the same discussion for the client process below.
+
+You may find it useful to run the command ipcs from your shell's command line to see information about current shared memory segments and semaphores (especially if you run into problems). While your final working server should delete shared segments itself, if you need to delete them by hand while debugging, the command ipcrm shm [shmid] may be extremely useful.
+
+Client
+
+One of your challenges for the client library code will be how to determine which structures in the shared memory segment correspond to currently active clients so that a new client can be assigned to the next (free) structure (and the corresponding address returned).
+

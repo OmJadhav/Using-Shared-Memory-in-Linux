@@ -7,7 +7,14 @@
 #include <sys/stat.h>
 #include <signal.h>
 #include <sys/shm.h>
+#include <time.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 #include "stats.h"
+
+
+// global key
+int key = 0;
 
 void
 usage(char *prog) 
@@ -21,8 +28,8 @@ usage(char *prog)
 void
 signal_cleanup(int signum) {
   if (signum == SIGINT) {
-    printf("cleaning up \n");
-    exit(0);
+    int ret = stat_unlink(key);
+    exit(ret);
   }
 }
 
@@ -30,8 +37,8 @@ signal_cleanup(int signum) {
 int
 main(int argc, char *argv[])
 {
+  test();
   // arguments
-  int key = 0;
   int priority;
   int sleeptime_ns;
   int cputime_ns;
@@ -72,6 +79,12 @@ main(int argc, char *argv[])
   // sigemptyset(&action.sa_mask);
   sigaction(SIGINT, &action, NULL);
   
+  // if the priority is less than 0 exit
+  if (priority < 0)
+  {
+    fprintf(stderr, "process priority is less than 0");
+    exit(1);
+  }
 
 /*  while(1) {
     printf("in while looop\n");
@@ -79,23 +92,58 @@ main(int argc, char *argv[])
 */
   stats_t pinfo;
   pinfo.pid = getpid();
+  strcpy(pinfo.program_name, "");
+  strncat(pinfo.program_name, argv[0], 15); 
   pinfo.counter = 0;
-  pinfo.priority = 0;
+  // set rhe priority of the process
+  setpriority(PRIO_PROCESS, 0, priority);
+  pinfo.priority = getpriority(PRIO_PROCESS, 0);
   pinfo.cpu_secs = 0;
 
-  int page_size = getpagesize();
-  int mem_id;
-   if ((mem_id = shmget(key, page_size, 0660)) == -1) {
-        perror("shmget");
-        exit(1);
-    }
   stats_t *shm_ptr;
-  shm_ptr = shmat(mem_id, (void *)0, 0);
-
+  shm_ptr = stat_init(key);
   *shm_ptr = pinfo;
 
+  struct timespec base_time, elapsed_time, last_ran_time, req_time;
 
+  clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &last_ran_time);
 
+  req_time.tv_sec = sleeptime_ns / 999999999;
+  req_time.tv_nsec = sleeptime_ns - (sleeptime_ns / 999999999);
+
+  while (1) {
+    // first, client should sleep
+    nanosleep(&req_time, NULL);
+    
+    // next, client should busy-wait
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &base_time);
+
+    while(1) {
+      clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &elapsed_time);
+      if (base_time.tv_sec == elapsed_time.tv_sec)
+      {
+        if (elapsed_time.tv_nsec - base_time.tv_nsec >= cputime_ns)
+        {
+          break;
+        }
+      } else {
+        long diff = (elapsed_time.tv_sec - base_time.tv_sec) * 1000000000 + (elapsed_time.tv_nsec - base_time.tv_nsec);
+        if (diff >= cputime_ns)
+        {
+          break;
+        }
+      }
+    } //  end of while busy wait
+
+    shm_ptr->counter++;
+
+    time_t old_sec = last_ran_time.tv_sec;
+    long old_nsec = last_ran_time.tv_nsec;
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &last_ran_time);
+    double diff_last_ran = ((last_ran_time.tv_sec - old_sec) * 1000000000 + (last_ran_time.tv_nsec - old_nsec)) / (double) 1000000000;
+    shm_ptr->cpu_secs += diff_last_ran;
+
+  }
 
   return 0;
 }
