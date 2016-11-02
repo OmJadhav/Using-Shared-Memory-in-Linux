@@ -102,6 +102,7 @@ main(int argc, char *argv[])
 
   stats_t *shm_ptr;
   shm_ptr = stat_init(key);
+  // TO DO check if the shmptr is not NULL 
   *shm_ptr = pinfo;
 
   struct timespec base_time, elapsed_time, last_ran_time, req_time;

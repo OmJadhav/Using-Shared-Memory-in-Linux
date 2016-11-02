@@ -132,6 +132,7 @@ main(int argc, char *argv[])
       }
       tmp_ptr++;
     }
+    printf("\n");
     server_counter++;
   }
   

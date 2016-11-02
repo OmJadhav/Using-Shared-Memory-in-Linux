@@ -21,3 +21,14 @@ Client
 
 One of your challenges for the client library code will be how to determine which structures in the shared memory segment correspond to currently active clients so that a new client can be assigned to the next (free) structure (and the corresponding address returned).
 
+---------------------------
+TO DO:
+Your server must be able to handle 16 clients. If more than 16 clients at a single time try to use this shared memory segment, those clients should receive an error.
+
+semaphore key
+To ensure that your program behaves as expected, we strongly recommend that you use your cslogin as a unique prefix in your semaphore name (e.g., for me, I could use "dusseau_sem" or "dusseauP3" or "dusseauXYZ").
+
+stats_ not stat_
+
+// need to do mutex_wait in server while creating shared mem
+// TO DO check if the shmptr is not NULL - IN CASE WHERE client is called before sever? or context switch before shared mem is iniitalised
