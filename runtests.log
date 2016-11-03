@@ -1,0 +1,2212 @@
+starting build
+
+**********************************************************************
+
+Test build
+build project using make
+
+**********************************************************************
+Trying to clean project using make clean
+make clean
+rm -f stats.o
+rm -f stats_client
+rm -f stats_server
+rm -f libstats.so 
+Trying to build project using make
+make
+gcc -c -fpic stats.c -Wall -Werror -lpthread -lm
+gcc -shared -o libstats.so stats.o -lm -lpthread
+gcc -o stats_server -Wall -g stats_server.c -lpthread -lm
+gcc -o stats_client stats_client.c -Wall -Werror -lstats -L. -lrt
+
+
+test build PASSED
+ (build project using make)
+
+starting linttest
+
+**********************************************************************
+
+Test linttest
+Lint test for C programming style
+
+**********************************************************************
+/u/c/s/cs537-1/ta/tests/3a/../../lint/cpplint.py --extensions c stats_server.c stats_client.c stats.c
+Done processing stats_server.c
+Done processing stats_client.c
+Done processing stats.c
+Total errors found: 0
+
+
+test linttest PASSED (6 of 6)
+ (Lint test for C programming style)
+
+starting clientnoservertest
+
+**********************************************************************
+
+Test clientnoservertest
+Client should exit gracefully if no server is running
+
+**********************************************************************
+key 3766 priority 1 sleeptime_ns 100 cputime_ns 100
+running client with: /tmp/tmpmBovTC/p/stats_client -k 3766 -p 1 -c 100 -s 100
+
+
+test clientnoservertest PASSED (6 of 6)
+ (Client should exit gracefully if no server is running)
+
+starting defaultargstest
+
+**********************************************************************
+
+Test defaultargstest
+Test that client chooses default values for unspecified args
+
+**********************************************************************
+key 5340 priority 0 sleeptime_ns 10000 cputime_ns 10000
+running server with: /tmp/tmpmBovTC/p/stats_server -k 5340
+running client with: /tmp/tmpmBovTC/p/stats_client -k 5340
+server output:
+
+2 9459 /tmp/tmpmBovTC/ 11970 0.15 0
+
+3 9459 /tmp/tmpmBovTC/ 24572 0.30 0
+
+4 9459 /tmp/tmpmBovTC/ 37366 0.46 0
+
+
+
+test defaultargstest PASSED (6 of 6)
+ (Test that client chooses default values for unspecified args)
+
+starting clientservertest
+
+**********************************************************************
+
+Test clientservertest
+Test basic functionality for one client & server
+
+**********************************************************************
+key 2196 priority 1 sleeptime_ns 700000000 cputime_ns 300000000
+running server with: /tmp/tmpmBovTC/p/stats_server -k 2196
+running client with: /tmp/tmpmBovTC/p/stats_client -c 300000000 -k 2196 -s 700000000 -p 1
+server output:
+
+2 9475 /tmp/tmpmBovTC/ 0 0.00 1
+
+3 9475 /tmp/tmpmBovTC/ 1 0.30 1
+
+4 9475 /tmp/tmpmBovTC/ 2 0.60 1
+
+
+
+test clientservertest PASSED (6 of 6)
+ (Test basic functionality for one client & server)
+
+starting twoservers1
+
+**********************************************************************
+
+Test twoservers1
+Check that two servers can run with different keys
+
+**********************************************************************
+key 972 priority 1 sleeptime_ns 300000000 cputime_ns 200000000
+key 7496 priority 1 sleeptime_ns 700000000 cputime_ns 300000000
+running server with: /tmp/tmpmBovTC/p/stats_server -k 7496
+running server with: /tmp/tmpmBovTC/p/stats_server -k 972
+running client with: /tmp/tmpmBovTC/p/stats_client -c 300000000 -p 1 -s 700000000 -k 7496
+running client with: /tmp/tmpmBovTC/p/stats_client -p 1 -k 972 -s 300000000 -c 200000000
+server output:
+
+2 9491 /tmp/tmpmBovTC/ 0 0.00 1
+
+3 9491 /tmp/tmpmBovTC/ 1 0.30 1
+
+4 9491 /tmp/tmpmBovTC/ 2 0.60 1
+
+server output:
+
+2 9492 /tmp/tmpmBovTC/ 1 0.20 1
+
+3 9492 /tmp/tmpmBovTC/ 3 0.60 1
+
+4 9492 /tmp/tmpmBovTC/ 5 1.00 1
+
+
+
+test twoservers1 PASSED (6 of 6)
+ (Check that two servers can run with different keys)
+
+starting twoservers2
+
+**********************************************************************
+
+Test twoservers2
+Check that two servers with same key can't run concurrently
+
+**********************************************************************
+key 2040 priority 1 sleeptime_ns 300000000 cputime_ns 200000000
+key 2040 priority 1 sleeptime_ns 300000000 cputime_ns 700000000
+running server with: /tmp/tmpmBovTC/p/stats_server -k 2040
+running server with: /tmp/tmpmBovTC/p/stats_server -k 2040
+running client with: /tmp/tmpmBovTC/p/stats_client -s 300000000 -p 1 -c 700000000 -k 2040
+running client with: /tmp/tmpmBovTC/p/stats_client -k 2040 -p 1 -c 200000000 -s 300000000
+server output:
+
+
+3 9512 /tmp/tmpmBovTC/ 0 0.00 1
+3 9513 /tmp/tmpmBovTC/ 1 0.20 1
+
+4 9512 /tmp/tmpmBovTC/ 1 0.70 1
+4 9513 /tmp/tmpmBovTC/ 3 0.60 1
+
+5 9512 /tmp/tmpmBovTC/ 2 1.40 1
+5 9513 /tmp/tmpmBovTC/ 5 1.00 1
+
+
+
+test twoservers2 PASSED (6 of 6)
+ (Check that two servers with same key can't run concurrently)
+
+starting twoservers3
+
+**********************************************************************
+
+Test twoservers3
+Check that two servers with same key can run in sequence
+
+**********************************************************************
+key 2947 priority 1 sleeptime_ns 600000000 cputime_ns 400000000
+key 2947 priority 1 sleeptime_ns 400000000 cputime_ns 600000000
+running server with: /tmp/tmpmBovTC/p/stats_server -k 2947
+running client with: /tmp/tmpmBovTC/p/stats_client -s 600000000 -k 2947 -c 400000000 -p 1
+server output:
+
+2 9525 /tmp/tmpmBovTC/ 0 0.00 1
+
+3 9525 /tmp/tmpmBovTC/ 1 0.40 1
+
+4 9525 /tmp/tmpmBovTC/ 2 0.80 1
+
+running server with: /tmp/tmpmBovTC/p/stats_server -k 2947
+running client with: /tmp/tmpmBovTC/p/stats_client -k 2947 -s 400000000 -c 600000000 -p 1
+server output:
+
+2 9536 /tmp/tmpmBovTC/ 0 0.00 1
+
+3 9536 /tmp/tmpmBovTC/ 1 0.60 1
+
+4 9536 /tmp/tmpmBovTC/ 2 1.20 1
+
+
+
+test twoservers3 PASSED (6 of 6)
+ (Check that two servers with same key can run in sequence)
+
+starting manyclients
+
+**********************************************************************
+
+Test manyclients
+Check that up to 16 clients can run concurrently
+
+**********************************************************************
+key 5534 priority 1 sleeptime_ns 10000 cputime_ns 10000
+key 5534 priority 1 sleeptime_ns 500000000 cputime_ns 500000000
+key 5534 priority 1 sleeptime_ns 500000000 cputime_ns 500000000
+key 5534 priority 1 sleeptime_ns 700000000 cputime_ns 300000000
+key 5534 priority 1 sleeptime_ns 200000000 cputime_ns 800000000
+key 5534 priority 1 sleeptime_ns 200000000 cputime_ns 800000000
+key 5534 priority 1 sleeptime_ns 500000000 cputime_ns 500000000
+key 5534 priority 1 sleeptime_ns 400000000 cputime_ns 600000000
+key 5534 priority 1 sleeptime_ns 700000000 cputime_ns 300000000
+key 5534 priority 1 sleeptime_ns 300000000 cputime_ns 700000000
+key 5534 priority 1 sleeptime_ns 200000000 cputime_ns 800000000
+key 5534 priority 1 sleeptime_ns 400000000 cputime_ns 600000000
+key 5534 priority 1 sleeptime_ns 300000000 cputime_ns 700000000
+key 5534 priority 1 sleeptime_ns 700000000 cputime_ns 300000000
+key 5534 priority 1 sleeptime_ns 500000000 cputime_ns 500000000
+key 5534 priority 19 sleeptime_ns 300000000 cputime_ns 700000000
+key 5534 priority 1 sleeptime_ns 600000000 cputime_ns 400000000
+running server with: /tmp/tmpmBovTC/p/stats_server -k 5534
+running client with: /tmp/tmpmBovTC/p/stats_client -p 1 -c 500000000 -k 5534 -s 500000000
+running client with: /tmp/tmpmBovTC/p/stats_client -c 800000000 -p 1 -k 5534 -s 200000000
+running client with: /tmp/tmpmBovTC/p/stats_client -c 500000000 -k 5534 -s 500000000 -p 1
+running client with: /tmp/tmpmBovTC/p/stats_client -k 5534 -p 19 -s 300000000 -c 700000000
+running client with: /tmp/tmpmBovTC/p/stats_client -p 1 -c 600000000 -s 400000000 -k 5534
+running client with: /tmp/tmpmBovTC/p/stats_client -s 500000000 -k 5534 -p 1 -c 500000000
+running client with: /tmp/tmpmBovTC/p/stats_client -s 400000000 -k 5534 -p 1 -c 600000000
+running client with: /tmp/tmpmBovTC/p/stats_client -p 1 -c 700000000 -k 5534 -s 300000000
+running client with: /tmp/tmpmBovTC/p/stats_client -c 300000000 -p 1 -k 5534 -s 700000000
+running client with: /tmp/tmpmBovTC/p/stats_client -k 5534 -c 700000000 -p 1 -s 300000000
+running client with: /tmp/tmpmBovTC/p/stats_client -p 1 -s 500000000 -k 5534 -c 500000000
+running client with: /tmp/tmpmBovTC/p/stats_client -c 400000000 -p 1 -k 5534 -s 600000000
+running client with: /tmp/tmpmBovTC/p/stats_client -p 1 -k 5534 -s 200000000 -c 800000000
+running client with: /tmp/tmpmBovTC/p/stats_client -p 1 -k 5534 -s 200000000 -c 800000000
+running client with: /tmp/tmpmBovTC/p/stats_client -k 5534 -c 300000000 -p 1 -s 700000000
+running client with: /tmp/tmpmBovTC/p/stats_client -s 700000000 -p 1 -k 5534 -c 300000000
+running client with: /tmp/tmpmBovTC/p/stats_client -k 5534 -p 1
+server output:
+
+2 9546 /tmp/tmpmBovTC/ 0 0.00 1
+2 9549 /tmp/tmpmBovTC/ 0 0.00 19
+2 9548 /tmp/tmpmBovTC/ 0 0.00 1
+2 9547 /tmp/tmpmBovTC/ 0 0.00 1
+2 9550 /tmp/tmpmBovTC/ 0 0.00 1
+2 9555 /tmp/tmpmBovTC/ 0 0.00 1
+2 9551 /tmp/tmpmBovTC/ 0 0.00 1
+2 9554 /tmp/tmpmBovTC/ 0 0.00 1
+2 9553 /tmp/tmpmBovTC/ 0 0.00 1
+2 9552 /tmp/tmpmBovTC/ 0 0.00 1
+2 9556 /tmp/tmpmBovTC/ 0 0.00 1
+2 9561 /tmp/tmpmBovTC/ 0 0.00 1
+2 9558 /tmp/tmpmBovTC/ 0 0.00 1
+2 9560 /tmp/tmpmBovTC/ 0 0.00 1
+2 9557 /tmp/tmpmBovTC/ 0 0.00 1
+2 9559 /tmp/tmpmBovTC/ 0 0.00 1
+
+3 9546 /tmp/tmpmBovTC/ 0 0.00 1
+3 9549 /tmp/tmpmBovTC/ 0 0.00 19
+3 9548 /tmp/tmpmBovTC/ 0 0.00 1
+3 9547 /tmp/tmpmBovTC/ 0 0.00 1
+3 9550 /tmp/tmpmBovTC/ 0 0.00 1
+3 9555 /tmp/tmpmBovTC/ 0 0.00 1
+3 9551 /tmp/tmpmBovTC/ 0 0.00 1
+3 9554 /tmp/tmpmBovTC/ 0 0.00 1
+3 9553 /tmp/tmpmBovTC/ 0 0.00 1
+3 9552 /tmp/tmpmBovTC/ 0 0.00 1
+3 9556 /tmp/tmpmBovTC/ 0 0.00 1
+3 9561 /tmp/tmpmBovTC/ 0 0.00 1
+3 9558 /tmp/tmpmBovTC/ 0 0.00 1
+3 9560 /tmp/tmpmBovTC/ 1 0.30 1
+3 9557 /tmp/tmpmBovTC/ 0 0.00 1
+3 9559 /tmp/tmpmBovTC/ 0 0.00 1
+
+4 9546 /tmp/tmpmBovTC/ 0 0.00 1
+4 9549 /tmp/tmpmBovTC/ 0 0.00 19
+4 9548 /tmp/tmpmBovTC/ 0 0.00 1
+4 9547 /tmp/tmpmBovTC/ 0 0.00 1
+4 9550 /tmp/tmpmBovTC/ 0 0.00 1
+4 9555 /tmp/tmpmBovTC/ 0 0.00 1
+4 9551 /tmp/tmpmBovTC/ 0 0.00 1
+4 9554 /tmp/tmpmBovTC/ 1 0.30 1
+4 9553 /tmp/tmpmBovTC/ 0 0.00 1
+4 9552 /tmp/tmpmBovTC/ 0 0.00 1
+4 9556 /tmp/tmpmBovTC/ 0 0.00 1
+4 9561 /tmp/tmpmBovTC/ 1 0.30 1
+4 9558 /tmp/tmpmBovTC/ 0 0.00 1
+4 9560 /tmp/tmpmBovTC/ 1 0.30 1
+4 9557 /tmp/tmpmBovTC/ 1 0.40 1
+4 9559 /tmp/tmpmBovTC/ 0 0.00 1
+
+5 9546 /tmp/tmpmBovTC/ 1 0.50 1
+5 9549 /tmp/tmpmBovTC/ 0 0.00 19
+5 9548 /tmp/tmpmBovTC/ 1 0.50 1
+5 9547 /tmp/tmpmBovTC/ 1 0.80 1
+5 9550 /tmp/tmpmBovTC/ 0 0.00 1
+5 9555 /tmp/tmpmBovTC/ 0 0.00 1
+5 9551 /tmp/tmpmBovTC/ 1 0.50 1
+5 9554 /tmp/tmpmBovTC/ 1 0.30 1
+5 9553 /tmp/tmpmBovTC/ 0 0.00 1
+5 9552 /tmp/tmpmBovTC/ 0 0.00 1
+5 9556 /tmp/tmpmBovTC/ 1 0.50 1
+5 9561 /tmp/tmpmBovTC/ 1 0.30 1
+5 9558 /tmp/tmpmBovTC/ 0 0.00 1
+5 9560 /tmp/tmpmBovTC/ 1 0.30 1
+5 9557 /tmp/tmpmBovTC/ 1 0.40 1
+5 9559 /tmp/tmpmBovTC/ 0 0.00 1
+
+6 9546 /tmp/tmpmBovTC/ 1 0.50 1
+6 9549 /tmp/tmpmBovTC/ 0 0.00 19
+6 9548 /tmp/tmpmBovTC/ 1 0.50 1
+6 9547 /tmp/tmpmBovTC/ 1 0.80 1
+6 9550 /tmp/tmpmBovTC/ 1 0.60 1
+6 9555 /tmp/tmpmBovTC/ 1 0.70 1
+6 9551 /tmp/tmpmBovTC/ 1 0.50 1
+6 9554 /tmp/tmpmBovTC/ 2 0.60 1
+6 9553 /tmp/tmpmBovTC/ 1 0.70 1
+6 9552 /tmp/tmpmBovTC/ 1 0.60 1
+6 9556 /tmp/tmpmBovTC/ 1 0.50 1
+6 9561 /tmp/tmpmBovTC/ 1 0.30 1
+6 9558 /tmp/tmpmBovTC/ 0 0.00 1
+6 9560 /tmp/tmpmBovTC/ 2 0.60 1
+6 9557 /tmp/tmpmBovTC/ 2 0.80 1
+6 9559 /tmp/tmpmBovTC/ 0 0.00 1
+
+7 9546 /tmp/tmpmBovTC/ 1 0.50 1
+7 9549 /tmp/tmpmBovTC/ 0 0.00 19
+7 9548 /tmp/tmpmBovTC/ 2 1.00 1
+7 9547 /tmp/tmpmBovTC/ 1 0.80 1
+7 9550 /tmp/tmpmBovTC/ 1 0.60 1
+7 9555 /tmp/tmpmBovTC/ 1 0.70 1
+7 9551 /tmp/tmpmBovTC/ 1 0.50 1
+7 9554 /tmp/tmpmBovTC/ 2 0.60 1
+7 9553 /tmp/tmpmBovTC/ 1 0.70 1
+7 9552 /tmp/tmpmBovTC/ 1 0.60 1
+7 9556 /tmp/tmpmBovTC/ 1 0.50 1
+7 9561 /tmp/tmpmBovTC/ 2 0.60 1
+7 9558 /tmp/tmpmBovTC/ 1 0.80 1
+7 9560 /tmp/tmpmBovTC/ 2 0.60 1
+7 9557 /tmp/tmpmBovTC/ 2 0.80 1
+7 9559 /tmp/tmpmBovTC/ 1 0.80 1
+
+8 9546 /tmp/tmpmBovTC/ 1 0.50 1
+8 9549 /tmp/tmpmBovTC/ 0 0.00 19
+8 9548 /tmp/tmpmBovTC/ 2 1.00 1
+8 9547 /tmp/tmpmBovTC/ 1 0.80 1
+8 9550 /tmp/tmpmBovTC/ 1 0.60 1
+8 9555 /tmp/tmpmBovTC/ 1 0.70 1
+8 9551 /tmp/tmpmBovTC/ 2 1.00 1
+8 9554 /tmp/tmpmBovTC/ 2 0.60 1
+8 9553 /tmp/tmpmBovTC/ 1 0.70 1
+8 9552 /tmp/tmpmBovTC/ 2 1.20 1
+8 9556 /tmp/tmpmBovTC/ 1 0.50 1
+8 9561 /tmp/tmpmBovTC/ 2 0.60 1
+8 9558 /tmp/tmpmBovTC/ 1 0.80 1
+8 9560 /tmp/tmpmBovTC/ 3 0.90 1
+8 9557 /tmp/tmpmBovTC/ 2 0.80 1
+8 9559 /tmp/tmpmBovTC/ 1 0.80 1
+
+9 9546 /tmp/tmpmBovTC/ 2 1.00 1
+9 9549 /tmp/tmpmBovTC/ 0 0.00 19
+9 9548 /tmp/tmpmBovTC/ 2 1.00 1
+9 9547 /tmp/tmpmBovTC/ 2 1.60 1
+9 9550 /tmp/tmpmBovTC/ 1 0.60 1
+9 9555 /tmp/tmpmBovTC/ 1 0.70 1
+9 9551 /tmp/tmpmBovTC/ 2 1.00 1
+9 9554 /tmp/tmpmBovTC/ 3 0.90 1
+9 9553 /tmp/tmpmBovTC/ 1 0.70 1
+9 9552 /tmp/tmpmBovTC/ 2 1.20 1
+9 9556 /tmp/tmpmBovTC/ 2 1.00 1
+9 9561 /tmp/tmpmBovTC/ 3 0.90 1
+9 9558 /tmp/tmpmBovTC/ 1 0.80 1
+9 9560 /tmp/tmpmBovTC/ 3 0.90 1
+9 9557 /tmp/tmpmBovTC/ 3 1.20 1
+9 9559 /tmp/tmpmBovTC/ 1 0.80 1
+
+10 9546 /tmp/tmpmBovTC/ 2 1.00 1
+10 9549 /tmp/tmpmBovTC/ 0 0.00 19
+10 9548 /tmp/tmpmBovTC/ 3 1.50 1
+10 9547 /tmp/tmpmBovTC/ 2 1.60 1
+10 9550 /tmp/tmpmBovTC/ 2 1.20 1
+10 9555 /tmp/tmpmBovTC/ 1 0.70 1
+10 9551 /tmp/tmpmBovTC/ 2 1.00 1
+10 9554 /tmp/tmpmBovTC/ 3 0.90 1
+10 9553 /tmp/tmpmBovTC/ 2 1.40 1
+10 9552 /tmp/tmpmBovTC/ 2 1.20 1
+10 9556 /tmp/tmpmBovTC/ 2 1.00 1
+10 9561 /tmp/tmpmBovTC/ 4 1.20 1
+10 9558 /tmp/tmpmBovTC/ 1 0.80 1
+10 9560 /tmp/tmpmBovTC/ 3 0.90 1
+10 9557 /tmp/tmpmBovTC/ 3 1.20 1
+10 9559 /tmp/tmpmBovTC/ 1 0.80 1
+
+11 9546 /tmp/tmpmBovTC/ 2 1.00 1
+11 9549 /tmp/tmpmBovTC/ 0 0.00 19
+11 9548 /tmp/tmpmBovTC/ 3 1.50 1
+11 9547 /tmp/tmpmBovTC/ 2 1.60 1
+11 9550 /tmp/tmpmBovTC/ 2 1.20 1
+11 9555 /tmp/tmpmBovTC/ 2 1.40 1
+11 9551 /tmp/tmpmBovTC/ 2 1.00 1
+11 9554 /tmp/tmpmBovTC/ 3 0.90 1
+11 9553 /tmp/tmpmBovTC/ 2 1.40 1
+11 9552 /tmp/tmpmBovTC/ 2 1.20 1
+11 9556 /tmp/tmpmBovTC/ 2 1.00 1
+11 9561 /tmp/tmpmBovTC/ 4 1.20 1
+11 9558 /tmp/tmpmBovTC/ 2 1.60 1
+11 9560 /tmp/tmpmBovTC/ 4 1.20 1
+11 9557 /tmp/tmpmBovTC/ 3 1.20 1
+11 9559 /tmp/tmpmBovTC/ 1 0.80 1
+
+12 9546 /tmp/tmpmBovTC/ 2 1.00 1
+12 9549 /tmp/tmpmBovTC/ 0 0.00 19
+12 9548 /tmp/tmpmBovTC/ 3 1.50 1
+12 9547 /tmp/tmpmBovTC/ 2 1.60 1
+12 9550 /tmp/tmpmBovTC/ 2 1.20 1
+12 9555 /tmp/tmpmBovTC/ 2 1.40 1
+12 9551 /tmp/tmpmBovTC/ 3 1.50 1
+12 9554 /tmp/tmpmBovTC/ 4 1.20 1
+12 9553 /tmp/tmpmBovTC/ 2 1.40 1
+12 9552 /tmp/tmpmBovTC/ 3 1.80 1
+12 9556 /tmp/tmpmBovTC/ 3 1.50 1
+12 9561 /tmp/tmpmBovTC/ 4 1.20 1
+12 9558 /tmp/tmpmBovTC/ 2 1.60 1
+12 9560 /tmp/tmpmBovTC/ 4 1.20 1
+12 9557 /tmp/tmpmBovTC/ 4 1.60 1
+12 9559 /tmp/tmpmBovTC/ 2 1.60 1
+
+13 9546 /tmp/tmpmBovTC/ 3 1.50 1
+13 9549 /tmp/tmpmBovTC/ 0 0.00 19
+13 9548 /tmp/tmpmBovTC/ 3 1.50 1
+13 9547 /tmp/tmpmBovTC/ 2 1.60 1
+13 9550 /tmp/tmpmBovTC/ 3 1.80 1
+13 9555 /tmp/tmpmBovTC/ 2 1.40 1
+13 9551 /tmp/tmpmBovTC/ 3 1.50 1
+13 9554 /tmp/tmpmBovTC/ 5 1.50 1
+13 9553 /tmp/tmpmBovTC/ 2 1.40 1
+13 9552 /tmp/tmpmBovTC/ 3 1.80 1
+13 9556 /tmp/tmpmBovTC/ 3 1.50 1
+13 9561 /tmp/tmpmBovTC/ 5 1.50 1
+13 9558 /tmp/tmpmBovTC/ 2 1.60 1
+13 9560 /tmp/tmpmBovTC/ 5 1.50 1
+13 9557 /tmp/tmpmBovTC/ 4 1.60 1
+13 9559 /tmp/tmpmBovTC/ 2 1.60 1
+
+14 9546 /tmp/tmpmBovTC/ 3 1.50 1
+14 9549 /tmp/tmpmBovTC/ 0 0.00 19
+14 9548 /tmp/tmpmBovTC/ 4 2.00 1
+14 9547 /tmp/tmpmBovTC/ 3 2.40 1
+14 9550 /tmp/tmpmBovTC/ 3 1.80 1
+14 9555 /tmp/tmpmBovTC/ 3 2.10 1
+14 9551 /tmp/tmpmBovTC/ 3 1.50 1
+14 9554 /tmp/tmpmBovTC/ 5 1.50 1
+14 9553 /tmp/tmpmBovTC/ 2 1.40 1
+14 9552 /tmp/tmpmBovTC/ 3 1.80 1
+14 9556 /tmp/tmpmBovTC/ 3 1.50 1
+14 9561 /tmp/tmpmBovTC/ 6 1.80 1
+14 9558 /tmp/tmpmBovTC/ 2 1.60 1
+14 9560 /tmp/tmpmBovTC/ 5 1.50 1
+14 9557 /tmp/tmpmBovTC/ 4 1.60 1
+14 9559 /tmp/tmpmBovTC/ 2 1.60 1
+
+15 9546 /tmp/tmpmBovTC/ 3 1.50 1
+15 9549 /tmp/tmpmBovTC/ 0 0.00 19
+15 9548 /tmp/tmpmBovTC/ 4 2.00 1
+15 9547 /tmp/tmpmBovTC/ 3 2.40 1
+15 9550 /tmp/tmpmBovTC/ 3 1.80 1
+15 9555 /tmp/tmpmBovTC/ 3 2.10 1
+15 9551 /tmp/tmpmBovTC/ 4 2.00 1
+15 9554 /tmp/tmpmBovTC/ 5 1.50 1
+15 9553 /tmp/tmpmBovTC/ 3 2.10 1
+15 9552 /tmp/tmpmBovTC/ 3 1.80 1
+15 9556 /tmp/tmpmBovTC/ 3 1.50 1
+15 9561 /tmp/tmpmBovTC/ 7 2.10 1
+15 9558 /tmp/tmpmBovTC/ 2 1.60 1
+15 9560 /tmp/tmpmBovTC/ 5 1.50 1
+15 9557 /tmp/tmpmBovTC/ 5 2.00 1
+15 9559 /tmp/tmpmBovTC/ 2 1.60 1
+
+16 9546 /tmp/tmpmBovTC/ 4 2.00 1
+16 9549 /tmp/tmpmBovTC/ 0 0.00 19
+16 9548 /tmp/tmpmBovTC/ 4 2.00 1
+16 9547 /tmp/tmpmBovTC/ 3 2.40 1
+16 9550 /tmp/tmpmBovTC/ 3 1.80 1
+16 9555 /tmp/tmpmBovTC/ 3 2.10 1
+16 9551 /tmp/tmpmBovTC/ 4 2.00 1
+16 9554 /tmp/tmpmBovTC/ 6 1.80 1
+16 9553 /tmp/tmpmBovTC/ 3 2.10 1
+16 9552 /tmp/tmpmBovTC/ 4 2.40 1
+16 9556 /tmp/tmpmBovTC/ 4 2.00 1
+16 9561 /tmp/tmpmBovTC/ 7 2.10 1
+16 9558 /tmp/tmpmBovTC/ 3 2.40 1
+16 9560 /tmp/tmpmBovTC/ 6 1.80 1
+16 9557 /tmp/tmpmBovTC/ 5 2.00 1
+16 9559 /tmp/tmpmBovTC/ 2 1.60 1
+
+17 9546 /tmp/tmpmBovTC/ 4 2.00 1
+17 9549 /tmp/tmpmBovTC/ 0 0.00 19
+17 9548 /tmp/tmpmBovTC/ 4 2.00 1
+17 9547 /tmp/tmpmBovTC/ 3 2.40 1
+17 9550 /tmp/tmpmBovTC/ 4 2.40 1
+17 9555 /tmp/tmpmBovTC/ 3 2.10 1
+17 9551 /tmp/tmpmBovTC/ 4 2.00 1
+17 9554 /tmp/tmpmBovTC/ 6 1.80 1
+17 9553 /tmp/tmpmBovTC/ 3 2.10 1
+17 9552 /tmp/tmpmBovTC/ 4 2.40 1
+17 9556 /tmp/tmpmBovTC/ 4 2.00 1
+17 9561 /tmp/tmpmBovTC/ 7 2.10 1
+17 9558 /tmp/tmpmBovTC/ 3 2.40 1
+17 9560 /tmp/tmpmBovTC/ 6 1.80 1
+17 9557 /tmp/tmpmBovTC/ 5 2.00 1
+17 9559 /tmp/tmpmBovTC/ 3 2.40 1
+
+18 9546 /tmp/tmpmBovTC/ 4 2.00 1
+18 9549 /tmp/tmpmBovTC/ 0 0.00 19
+18 9548 /tmp/tmpmBovTC/ 5 2.50 1
+18 9547 /tmp/tmpmBovTC/ 3 2.40 1
+18 9550 /tmp/tmpmBovTC/ 4 2.40 1
+18 9555 /tmp/tmpmBovTC/ 3 2.10 1
+18 9551 /tmp/tmpmBovTC/ 4 2.00 1
+18 9554 /tmp/tmpmBovTC/ 7 2.10 1
+18 9553 /tmp/tmpmBovTC/ 3 2.10 1
+18 9552 /tmp/tmpmBovTC/ 4 2.40 1
+18 9556 /tmp/tmpmBovTC/ 4 2.00 1
+18 9561 /tmp/tmpmBovTC/ 8 2.40 1
+18 9558 /tmp/tmpmBovTC/ 3 2.40 1
+18 9560 /tmp/tmpmBovTC/ 6 1.80 1
+18 9557 /tmp/tmpmBovTC/ 6 2.40 1
+18 9559 /tmp/tmpmBovTC/ 3 2.40 1
+
+19 9546 /tmp/tmpmBovTC/ 4 2.00 1
+19 9549 /tmp/tmpmBovTC/ 0 0.00 19
+19 9548 /tmp/tmpmBovTC/ 5 2.50 1
+19 9547 /tmp/tmpmBovTC/ 3 2.40 1
+19 9550 /tmp/tmpmBovTC/ 4 2.40 1
+19 9555 /tmp/tmpmBovTC/ 4 2.80 1
+19 9551 /tmp/tmpmBovTC/ 5 2.50 1
+19 9554 /tmp/tmpmBovTC/ 7 2.10 1
+19 9553 /tmp/tmpmBovTC/ 4 2.80 1
+19 9552 /tmp/tmpmBovTC/ 4 2.40 1
+19 9556 /tmp/tmpmBovTC/ 4 2.00 1
+19 9561 /tmp/tmpmBovTC/ 8 2.40 1
+19 9558 /tmp/tmpmBovTC/ 3 2.40 1
+19 9560 /tmp/tmpmBovTC/ 7 2.10 1
+19 9557 /tmp/tmpmBovTC/ 6 2.40 1
+19 9559 /tmp/tmpmBovTC/ 3 2.40 1
+
+20 9546 /tmp/tmpmBovTC/ 5 2.50 1
+20 9549 /tmp/tmpmBovTC/ 0 0.00 19
+20 9548 /tmp/tmpmBovTC/ 5 2.50 1
+20 9547 /tmp/tmpmBovTC/ 4 3.20 1
+20 9550 /tmp/tmpmBovTC/ 4 2.40 1
+20 9555 /tmp/tmpmBovTC/ 4 2.80 1
+20 9551 /tmp/tmpmBovTC/ 5 2.50 1
+20 9554 /tmp/tmpmBovTC/ 7 2.10 1
+20 9553 /tmp/tmpmBovTC/ 4 2.80 1
+20 9552 /tmp/tmpmBovTC/ 5 3.00 1
+20 9556 /tmp/tmpmBovTC/ 5 2.50 1
+20 9561 /tmp/tmpmBovTC/ 9 2.70 1
+20 9558 /tmp/tmpmBovTC/ 4 3.20 1
+20 9560 /tmp/tmpmBovTC/ 7 2.10 1
+20 9557 /tmp/tmpmBovTC/ 7 2.80 1
+20 9559 /tmp/tmpmBovTC/ 3 2.40 1
+
+21 9546 /tmp/tmpmBovTC/ 5 2.50 1
+21 9549 /tmp/tmpmBovTC/ 0 0.00 19
+21 9548 /tmp/tmpmBovTC/ 6 3.00 1
+21 9547 /tmp/tmpmBovTC/ 4 3.20 1
+21 9550 /tmp/tmpmBovTC/ 5 3.00 1
+21 9555 /tmp/tmpmBovTC/ 4 2.80 1
+21 9551 /tmp/tmpmBovTC/ 5 2.50 1
+21 9554 /tmp/tmpmBovTC/ 8 2.40 1
+21 9553 /tmp/tmpmBovTC/ 4 2.80 1
+21 9552 /tmp/tmpmBovTC/ 5 3.00 1
+21 9556 /tmp/tmpmBovTC/ 5 2.50 1
+21 9561 /tmp/tmpmBovTC/ 9 2.70 1
+21 9558 /tmp/tmpmBovTC/ 4 3.20 1
+21 9560 /tmp/tmpmBovTC/ 8 2.40 1
+21 9557 /tmp/tmpmBovTC/ 7 2.80 1
+21 9559 /tmp/tmpmBovTC/ 3 2.40 1
+
+22 9546 /tmp/tmpmBovTC/ 5 2.50 1
+22 9549 /tmp/tmpmBovTC/ 0 0.00 19
+22 9548 /tmp/tmpmBovTC/ 6 3.00 1
+22 9547 /tmp/tmpmBovTC/ 4 3.20 1
+22 9550 /tmp/tmpmBovTC/ 5 3.00 1
+22 9555 /tmp/tmpmBovTC/ 4 2.80 1
+22 9551 /tmp/tmpmBovTC/ 5 2.50 1
+22 9554 /tmp/tmpmBovTC/ 8 2.40 1
+22 9553 /tmp/tmpmBovTC/ 4 2.80 1
+22 9552 /tmp/tmpmBovTC/ 5 3.00 1
+22 9556 /tmp/tmpmBovTC/ 5 2.50 1
+22 9561 /tmp/tmpmBovTC/ 9 2.70 1
+22 9558 /tmp/tmpmBovTC/ 4 3.20 1
+22 9560 /tmp/tmpmBovTC/ 8 2.40 1
+22 9557 /tmp/tmpmBovTC/ 8 3.20 1
+22 9559 /tmp/tmpmBovTC/ 4 3.20 1
+
+23 9546 /tmp/tmpmBovTC/ 6 3.00 1
+23 9549 /tmp/tmpmBovTC/ 0 0.00 19
+23 9548 /tmp/tmpmBovTC/ 6 3.00 1
+23 9547 /tmp/tmpmBovTC/ 4 3.20 1
+23 9550 /tmp/tmpmBovTC/ 5 3.00 1
+23 9555 /tmp/tmpmBovTC/ 4 2.80 1
+23 9551 /tmp/tmpmBovTC/ 6 3.00 1
+23 9554 /tmp/tmpmBovTC/ 9 2.70 1
+23 9553 /tmp/tmpmBovTC/ 5 3.50 1
+23 9552 /tmp/tmpmBovTC/ 5 3.00 1
+23 9556 /tmp/tmpmBovTC/ 5 2.50 1
+23 9561 /tmp/tmpmBovTC/ 10 3.00 1
+23 9558 /tmp/tmpmBovTC/ 4 3.20 1
+23 9560 /tmp/tmpmBovTC/ 9 2.70 1
+23 9557 /tmp/tmpmBovTC/ 8 3.20 1
+23 9559 /tmp/tmpmBovTC/ 4 3.20 1
+
+24 9546 /tmp/tmpmBovTC/ 6 3.00 1
+24 9549 /tmp/tmpmBovTC/ 0 0.00 19
+24 9548 /tmp/tmpmBovTC/ 7 3.50 1
+24 9547 /tmp/tmpmBovTC/ 4 3.20 1
+24 9550 /tmp/tmpmBovTC/ 6 3.60 1
+24 9555 /tmp/tmpmBovTC/ 5 3.50 1
+24 9551 /tmp/tmpmBovTC/ 6 3.00 1
+24 9554 /tmp/tmpmBovTC/ 10 3.00 1
+24 9553 /tmp/tmpmBovTC/ 5 3.50 1
+24 9552 /tmp/tmpmBovTC/ 6 3.60 1
+24 9556 /tmp/tmpmBovTC/ 6 3.00 1
+24 9561 /tmp/tmpmBovTC/ 10 3.00 1
+24 9558 /tmp/tmpmBovTC/ 4 3.20 1
+24 9560 /tmp/tmpmBovTC/ 9 2.70 1
+24 9557 /tmp/tmpmBovTC/ 9 3.60 1
+24 9559 /tmp/tmpmBovTC/ 4 3.20 1
+
+25 9546 /tmp/tmpmBovTC/ 6 3.00 1
+25 9549 /tmp/tmpmBovTC/ 0 0.00 19
+25 9548 /tmp/tmpmBovTC/ 7 3.50 1
+25 9547 /tmp/tmpmBovTC/ 5 4.00 1
+25 9550 /tmp/tmpmBovTC/ 6 3.60 1
+25 9555 /tmp/tmpmBovTC/ 5 3.50 1
+25 9551 /tmp/tmpmBovTC/ 6 3.00 1
+25 9554 /tmp/tmpmBovTC/ 11 3.30 1
+25 9553 /tmp/tmpmBovTC/ 5 3.50 1
+25 9552 /tmp/tmpmBovTC/ 6 3.60 1
+25 9556 /tmp/tmpmBovTC/ 6 3.00 1
+25 9561 /tmp/tmpmBovTC/ 11 3.30 1
+25 9558 /tmp/tmpmBovTC/ 4 3.20 1
+25 9560 /tmp/tmpmBovTC/ 9 2.70 1
+25 9557 /tmp/tmpmBovTC/ 9 3.60 1
+25 9559 /tmp/tmpmBovTC/ 4 3.20 1
+
+26 9546 /tmp/tmpmBovTC/ 7 3.50 1
+26 9549 /tmp/tmpmBovTC/ 0 0.00 19
+26 9548 /tmp/tmpmBovTC/ 7 3.50 1
+26 9547 /tmp/tmpmBovTC/ 5 4.00 1
+26 9550 /tmp/tmpmBovTC/ 6 3.60 1
+26 9555 /tmp/tmpmBovTC/ 5 3.50 1
+26 9551 /tmp/tmpmBovTC/ 7 3.50 1
+26 9554 /tmp/tmpmBovTC/ 11 3.30 1
+26 9553 /tmp/tmpmBovTC/ 5 3.50 1
+26 9552 /tmp/tmpmBovTC/ 6 3.60 1
+26 9556 /tmp/tmpmBovTC/ 6 3.00 1
+26 9561 /tmp/tmpmBovTC/ 11 3.30 1
+26 9558 /tmp/tmpmBovTC/ 5 4.00 1
+26 9560 /tmp/tmpmBovTC/ 10 3.00 1
+26 9557 /tmp/tmpmBovTC/ 9 3.60 1
+26 9559 /tmp/tmpmBovTC/ 4 3.20 1
+
+27 9546 /tmp/tmpmBovTC/ 7 3.50 1
+27 9549 /tmp/tmpmBovTC/ 0 0.00 19
+27 9548 /tmp/tmpmBovTC/ 7 3.50 1
+27 9547 /tmp/tmpmBovTC/ 5 4.00 1
+27 9550 /tmp/tmpmBovTC/ 6 3.60 1
+27 9555 /tmp/tmpmBovTC/ 5 3.50 1
+27 9551 /tmp/tmpmBovTC/ 7 3.50 1
+27 9554 /tmp/tmpmBovTC/ 11 3.30 1
+27 9553 /tmp/tmpmBovTC/ 5 3.50 1
+27 9552 /tmp/tmpmBovTC/ 6 3.60 1
+27 9556 /tmp/tmpmBovTC/ 6 3.00 1
+27 9561 /tmp/tmpmBovTC/ 11 3.30 1
+27 9558 /tmp/tmpmBovTC/ 5 4.00 1
+27 9560 /tmp/tmpmBovTC/ 10 3.00 1
+27 9557 /tmp/tmpmBovTC/ 10 4.00 1
+27 9559 /tmp/tmpmBovTC/ 5 4.00 1
+
+28 9546 /tmp/tmpmBovTC/ 7 3.50 1
+28 9549 /tmp/tmpmBovTC/ 0 0.00 19
+28 9548 /tmp/tmpmBovTC/ 8 4.00 1
+28 9547 /tmp/tmpmBovTC/ 5 4.00 1
+28 9550 /tmp/tmpmBovTC/ 7 4.20 1
+28 9555 /tmp/tmpmBovTC/ 6 4.20 1
+28 9551 /tmp/tmpmBovTC/ 7 3.50 1
+28 9554 /tmp/tmpmBovTC/ 12 3.60 1
+28 9553 /tmp/tmpmBovTC/ 6 4.20 1
+28 9552 /tmp/tmpmBovTC/ 7 4.20 1
+28 9556 /tmp/tmpmBovTC/ 7 3.50 1
+28 9561 /tmp/tmpmBovTC/ 12 3.60 1
+28 9558 /tmp/tmpmBovTC/ 5 4.00 1
+28 9560 /tmp/tmpmBovTC/ 11 3.30 1
+28 9557 /tmp/tmpmBovTC/ 10 4.00 1
+28 9559 /tmp/tmpmBovTC/ 5 4.00 1
+
+29 9546 /tmp/tmpmBovTC/ 7 3.50 1
+29 9549 /tmp/tmpmBovTC/ 0 0.00 19
+29 9548 /tmp/tmpmBovTC/ 8 4.00 1
+29 9547 /tmp/tmpmBovTC/ 5 4.00 1
+29 9550 /tmp/tmpmBovTC/ 7 4.20 1
+29 9555 /tmp/tmpmBovTC/ 6 4.20 1
+29 9551 /tmp/tmpmBovTC/ 7 3.50 1
+29 9554 /tmp/tmpmBovTC/ 12 3.60 1
+29 9553 /tmp/tmpmBovTC/ 6 4.20 1
+29 9552 /tmp/tmpmBovTC/ 7 4.20 1
+29 9556 /tmp/tmpmBovTC/ 7 3.50 1
+29 9561 /tmp/tmpmBovTC/ 12 3.60 1
+29 9558 /tmp/tmpmBovTC/ 6 4.80 1
+29 9560 /tmp/tmpmBovTC/ 11 3.30 1
+29 9557 /tmp/tmpmBovTC/ 10 4.00 1
+29 9559 /tmp/tmpmBovTC/ 5 4.00 1
+
+30 9546 /tmp/tmpmBovTC/ 8 4.00 1
+30 9549 /tmp/tmpmBovTC/ 0 0.00 19
+30 9548 /tmp/tmpmBovTC/ 8 4.00 1
+30 9547 /tmp/tmpmBovTC/ 6 4.80 1
+30 9550 /tmp/tmpmBovTC/ 7 4.20 1
+30 9555 /tmp/tmpmBovTC/ 6 4.20 1
+30 9551 /tmp/tmpmBovTC/ 8 4.00 1
+30 9554 /tmp/tmpmBovTC/ 13 3.90 1
+30 9553 /tmp/tmpmBovTC/ 6 4.20 1
+30 9552 /tmp/tmpmBovTC/ 7 4.20 1
+30 9556 /tmp/tmpmBovTC/ 7 3.50 1
+30 9561 /tmp/tmpmBovTC/ 12 3.60 1
+30 9558 /tmp/tmpmBovTC/ 6 4.80 1
+30 9560 /tmp/tmpmBovTC/ 11 3.30 1
+30 9557 /tmp/tmpmBovTC/ 10 4.00 1
+30 9559 /tmp/tmpmBovTC/ 5 4.00 1
+
+31 9546 /tmp/tmpmBovTC/ 8 4.00 1
+31 9549 /tmp/tmpmBovTC/ 0 0.00 19
+31 9548 /tmp/tmpmBovTC/ 8 4.00 1
+31 9547 /tmp/tmpmBovTC/ 6 4.80 1
+31 9550 /tmp/tmpmBovTC/ 7 4.20 1
+31 9555 /tmp/tmpmBovTC/ 6 4.20 1
+31 9551 /tmp/tmpmBovTC/ 8 4.00 1
+31 9554 /tmp/tmpmBovTC/ 13 3.90 1
+31 9553 /tmp/tmpmBovTC/ 7 4.90 1
+31 9552 /tmp/tmpmBovTC/ 7 4.20 1
+31 9556 /tmp/tmpmBovTC/ 8 4.00 1
+31 9561 /tmp/tmpmBovTC/ 13 3.90 1
+31 9558 /tmp/tmpmBovTC/ 6 4.80 1
+31 9560 /tmp/tmpmBovTC/ 12 3.60 1
+31 9557 /tmp/tmpmBovTC/ 11 4.40 1
+31 9559 /tmp/tmpmBovTC/ 5 4.00 1
+
+
+
+test manyclients PASSED (6 of 6)
+ (Check that up to 16 clients can run concurrently)
+
+starting manyclients2
+
+**********************************************************************
+
+Test manyclients2
+Check that when a client leaves, another can enter
+
+**********************************************************************
+key 1773 priority 1 sleeptime_ns 200000000 cputime_ns 800000000
+key 1773 priority 1 sleeptime_ns 600000000 cputime_ns 400000000
+key 1773 priority 1 sleeptime_ns 600000000 cputime_ns 400000000
+key 1773 priority 1 sleeptime_ns 500000000 cputime_ns 500000000
+key 1773 priority 1 sleeptime_ns 400000000 cputime_ns 600000000
+key 1773 priority 1 sleeptime_ns 400000000 cputime_ns 600000000
+key 1773 priority 1 sleeptime_ns 300000000 cputime_ns 700000000
+key 1773 priority 1 sleeptime_ns 400000000 cputime_ns 600000000
+key 1773 priority 1 sleeptime_ns 700000000 cputime_ns 300000000
+key 1773 priority 1 sleeptime_ns 400000000 cputime_ns 600000000
+key 1773 priority 1 sleeptime_ns 400000000 cputime_ns 600000000
+key 1773 priority 1 sleeptime_ns 600000000 cputime_ns 400000000
+key 1773 priority 1 sleeptime_ns 400000000 cputime_ns 600000000
+key 1773 priority 1 sleeptime_ns 300000000 cputime_ns 700000000
+key 1773 priority 1 sleeptime_ns 600000000 cputime_ns 400000000
+key 1773 priority 1 sleeptime_ns 200000000 cputime_ns 800000000
+key 1773 priority 1 sleeptime_ns 500000000 cputime_ns 500000000
+running server with: /tmp/tmpmBovTC/p/stats_server -k 1773
+running client with: /tmp/tmpmBovTC/p/stats_client -s 400000000 -p 1 -c 600000000 -k 1773
+running client with: /tmp/tmpmBovTC/p/stats_client -k 1773 -c 400000000 -p 1 -s 600000000
+running client with: /tmp/tmpmBovTC/p/stats_client -s 400000000 -c 600000000 -k 1773 -p 1
+running client with: /tmp/tmpmBovTC/p/stats_client -k 1773 -s 300000000 -p 1 -c 700000000
+running client with: /tmp/tmpmBovTC/p/stats_client -k 1773 -s 200000000 -p 1 -c 800000000
+running client with: /tmp/tmpmBovTC/p/stats_client -k 1773 -s 200000000 -p 1 -c 800000000
+running client with: /tmp/tmpmBovTC/p/stats_client -p 1 -s 600000000 -k 1773 -c 400000000
+running client with: /tmp/tmpmBovTC/p/stats_client -c 500000000 -p 1 -s 500000000 -k 1773
+running client with: /tmp/tmpmBovTC/p/stats_client -c 600000000 -p 1 -s 400000000 -k 1773
+running client with: /tmp/tmpmBovTC/p/stats_client -s 600000000 -k 1773 -c 400000000 -p 1
+running client with: /tmp/tmpmBovTC/p/stats_client -p 1 -k 1773 -c 400000000 -s 600000000
+running client with: /tmp/tmpmBovTC/p/stats_client -p 1 -k 1773 -s 500000000 -c 500000000
+running client with: /tmp/tmpmBovTC/p/stats_client -k 1773 -p 1 -c 600000000 -s 400000000
+running client with: /tmp/tmpmBovTC/p/stats_client -k 1773 -c 300000000 -p 1 -s 700000000
+running client with: /tmp/tmpmBovTC/p/stats_client -c 600000000 -k 1773 -s 400000000 -p 1
+running client with: /tmp/tmpmBovTC/p/stats_client -k 1773 -p 1 -s 400000000 -c 600000000
+running client with: /tmp/tmpmBovTC/p/stats_client -k 1773 -p 1 -s 300000000 -c 700000000
+server output:
+
+2 9590 /tmp/tmpmBovTC/ 0 0.00 1
+2 9591 /tmp/tmpmBovTC/ 0 0.00 1
+2 9593 /tmp/tmpmBovTC/ 0 0.00 1
+2 9592 /tmp/tmpmBovTC/ 0 0.00 1
+2 9594 /tmp/tmpmBovTC/ 0 0.00 1
+2 9595 /tmp/tmpmBovTC/ 0 0.00 1
+2 9596 /tmp/tmpmBovTC/ 0 0.00 1
+2 9597 /tmp/tmpmBovTC/ 0 0.00 1
+2 9598 /tmp/tmpmBovTC/ 0 0.00 1
+2 9599 /tmp/tmpmBovTC/ 0 0.00 1
+2 9600 /tmp/tmpmBovTC/ 0 0.00 1
+2 9602 /tmp/tmpmBovTC/ 0 0.00 1
+2 9605 /tmp/tmpmBovTC/ 0 0.00 1
+2 9601 /tmp/tmpmBovTC/ 0 0.00 1
+2 9603 /tmp/tmpmBovTC/ 0 0.00 1
+2 9604 /tmp/tmpmBovTC/ 0 0.00 1
+
+3 9590 /tmp/tmpmBovTC/ 0 0.00 1
+3 9591 /tmp/tmpmBovTC/ 0 0.00 1
+3 9593 /tmp/tmpmBovTC/ 0 0.00 1
+3 9592 /tmp/tmpmBovTC/ 0 0.00 1
+3 9594 /tmp/tmpmBovTC/ 0 0.00 1
+3 9595 /tmp/tmpmBovTC/ 0 0.00 1
+3 9596 /tmp/tmpmBovTC/ 0 0.00 1
+3 9597 /tmp/tmpmBovTC/ 0 0.00 1
+3 9598 /tmp/tmpmBovTC/ 0 0.00 1
+3 9599 /tmp/tmpmBovTC/ 0 0.00 1
+3 9600 /tmp/tmpmBovTC/ 0 0.00 1
+3 9602 /tmp/tmpmBovTC/ 0 0.00 1
+3 9605 /tmp/tmpmBovTC/ 0 0.00 1
+3 9601 /tmp/tmpmBovTC/ 0 0.00 1
+3 9603 /tmp/tmpmBovTC/ 0 0.00 1
+3 9604 /tmp/tmpmBovTC/ 0 0.00 1
+
+4 9590 /tmp/tmpmBovTC/ 0 0.00 1
+4 9591 /tmp/tmpmBovTC/ 0 0.00 1
+4 9593 /tmp/tmpmBovTC/ 0 0.00 1
+4 9592 /tmp/tmpmBovTC/ 0 0.00 1
+4 9594 /tmp/tmpmBovTC/ 0 0.00 1
+4 9595 /tmp/tmpmBovTC/ 0 0.00 1
+4 9596 /tmp/tmpmBovTC/ 0 0.00 1
+4 9597 /tmp/tmpmBovTC/ 0 0.00 1
+4 9598 /tmp/tmpmBovTC/ 0 0.00 1
+4 9599 /tmp/tmpmBovTC/ 0 0.00 1
+4 9600 /tmp/tmpmBovTC/ 1 0.40 1
+4 9602 /tmp/tmpmBovTC/ 0 0.00 1
+4 9605 /tmp/tmpmBovTC/ 0 0.00 1
+4 9601 /tmp/tmpmBovTC/ 0 0.00 1
+4 9603 /tmp/tmpmBovTC/ 0 0.00 1
+4 9604 /tmp/tmpmBovTC/ 0 0.00 1
+
+5 9590 /tmp/tmpmBovTC/ 0 0.00 1
+5 9591 /tmp/tmpmBovTC/ 1 0.40 1
+5 9593 /tmp/tmpmBovTC/ 0 0.00 1
+5 9592 /tmp/tmpmBovTC/ 0 0.00 1
+5 9594 /tmp/tmpmBovTC/ 0 0.00 1
+5 9595 /tmp/tmpmBovTC/ 0 0.00 1
+5 9596 /tmp/tmpmBovTC/ 1 0.40 1
+5 9597 /tmp/tmpmBovTC/ 0 0.00 1
+5 9598 /tmp/tmpmBovTC/ 0 0.00 1
+5 9599 /tmp/tmpmBovTC/ 1 0.40 1
+5 9600 /tmp/tmpmBovTC/ 1 0.40 1
+5 9602 /tmp/tmpmBovTC/ 0 0.00 1
+5 9605 /tmp/tmpmBovTC/ 0 0.00 1
+5 9601 /tmp/tmpmBovTC/ 0 0.00 1
+5 9603 /tmp/tmpmBovTC/ 1 0.30 1
+5 9604 /tmp/tmpmBovTC/ 0 0.00 1
+
+6 9590 /tmp/tmpmBovTC/ 1 0.60 1
+6 9591 /tmp/tmpmBovTC/ 1 0.40 1
+6 9593 /tmp/tmpmBovTC/ 1 0.70 1
+6 9592 /tmp/tmpmBovTC/ 1 0.60 1
+6 9594 /tmp/tmpmBovTC/ 1 0.80 1
+6 9595 /tmp/tmpmBovTC/ 1 0.80 1
+6 9596 /tmp/tmpmBovTC/ 1 0.40 1
+6 9597 /tmp/tmpmBovTC/ 1 0.50 1
+6 9598 /tmp/tmpmBovTC/ 1 0.60 1
+6 9599 /tmp/tmpmBovTC/ 1 0.40 1
+6 9600 /tmp/tmpmBovTC/ 1 0.40 1
+6 9602 /tmp/tmpmBovTC/ 1 0.60 1
+6 9605 /tmp/tmpmBovTC/ 1 0.60 1
+6 9601 /tmp/tmpmBovTC/ 1 0.50 1
+6 9603 /tmp/tmpmBovTC/ 1 0.30 1
+6 9604 /tmp/tmpmBovTC/ 1 0.60 1
+
+7 9590 /tmp/tmpmBovTC/ 1 0.60 1
+7 9591 /tmp/tmpmBovTC/ 1 0.40 1
+7 9593 /tmp/tmpmBovTC/ 1 0.70 1
+7 9592 /tmp/tmpmBovTC/ 1 0.60 1
+7 9594 /tmp/tmpmBovTC/ 1 0.80 1
+7 9595 /tmp/tmpmBovTC/ 1 0.80 1
+7 9596 /tmp/tmpmBovTC/ 1 0.40 1
+7 9597 /tmp/tmpmBovTC/ 1 0.50 1
+7 9598 /tmp/tmpmBovTC/ 1 0.60 1
+7 9599 /tmp/tmpmBovTC/ 1 0.40 1
+7 9600 /tmp/tmpmBovTC/ 1 0.40 1
+7 9602 /tmp/tmpmBovTC/ 1 0.60 1
+7 9605 /tmp/tmpmBovTC/ 1 0.60 1
+7 9601 /tmp/tmpmBovTC/ 1 0.50 1
+7 9603 /tmp/tmpmBovTC/ 1 0.30 1
+7 9604 /tmp/tmpmBovTC/ 1 0.60 1
+
+8 9590 /tmp/tmpmBovTC/ 1 0.60 1
+8 9591 /tmp/tmpmBovTC/ 1 0.40 1
+8 9593 /tmp/tmpmBovTC/ 1 0.70 1
+8 9592 /tmp/tmpmBovTC/ 1 0.60 1
+8 9594 /tmp/tmpmBovTC/ 1 0.80 1
+8 9595 /tmp/tmpmBovTC/ 1 0.80 1
+8 9596 /tmp/tmpmBovTC/ 2 0.80 1
+8 9597 /tmp/tmpmBovTC/ 1 0.50 1
+8 9598 /tmp/tmpmBovTC/ 1 0.60 1
+8 9599 /tmp/tmpmBovTC/ 1 0.40 1
+8 9600 /tmp/tmpmBovTC/ 2 0.80 1
+8 9602 /tmp/tmpmBovTC/ 1 0.60 1
+8 9605 /tmp/tmpmBovTC/ 1 0.60 1
+8 9601 /tmp/tmpmBovTC/ 1 0.50 1
+8 9603 /tmp/tmpmBovTC/ 2 0.60 1
+8 9604 /tmp/tmpmBovTC/ 1 0.60 1
+
+9 9590 /tmp/tmpmBovTC/ 1 0.60 1
+9 9591 /tmp/tmpmBovTC/ 2 0.80 1
+9 9593 /tmp/tmpmBovTC/ 1 0.70 1
+9 9592 /tmp/tmpmBovTC/ 1 0.60 1
+9 9594 /tmp/tmpmBovTC/ 1 0.80 1
+9 9595 /tmp/tmpmBovTC/ 1 0.80 1
+9 9596 /tmp/tmpmBovTC/ 2 0.80 1
+9 9597 /tmp/tmpmBovTC/ 1 0.50 1
+9 9598 /tmp/tmpmBovTC/ 1 0.60 1
+9 9599 /tmp/tmpmBovTC/ 2 0.80 1
+9 9600 /tmp/tmpmBovTC/ 2 0.80 1
+9 9602 /tmp/tmpmBovTC/ 1 0.60 1
+9 9605 /tmp/tmpmBovTC/ 1 0.60 1
+9 9601 /tmp/tmpmBovTC/ 1 0.50 1
+9 9603 /tmp/tmpmBovTC/ 2 0.60 1
+9 9604 /tmp/tmpmBovTC/ 1 0.60 1
+
+10 9590 /tmp/tmpmBovTC/ 1 0.60 1
+10 9591 /tmp/tmpmBovTC/ 2 0.80 1
+10 9593 /tmp/tmpmBovTC/ 1 0.70 1
+10 9592 /tmp/tmpmBovTC/ 1 0.60 1
+10 9594 /tmp/tmpmBovTC/ 1 0.80 1
+10 9595 /tmp/tmpmBovTC/ 1 0.80 1
+10 9596 /tmp/tmpmBovTC/ 2 0.80 1
+10 9597 /tmp/tmpmBovTC/ 2 1.00 1
+10 9598 /tmp/tmpmBovTC/ 1 0.60 1
+10 9599 /tmp/tmpmBovTC/ 2 0.80 1
+10 9600 /tmp/tmpmBovTC/ 2 0.80 1
+10 9602 /tmp/tmpmBovTC/ 2 1.20 1
+10 9605 /tmp/tmpmBovTC/ 2 1.20 1
+10 9601 /tmp/tmpmBovTC/ 2 1.00 1
+10 9603 /tmp/tmpmBovTC/ 2 0.60 1
+10 9604 /tmp/tmpmBovTC/ 2 1.20 1
+
+11 9590 /tmp/tmpmBovTC/ 2 1.20 1
+11 9591 /tmp/tmpmBovTC/ 2 0.80 1
+11 9593 /tmp/tmpmBovTC/ 2 1.40 1
+11 9592 /tmp/tmpmBovTC/ 2 1.20 1
+11 9594 /tmp/tmpmBovTC/ 2 1.60 1
+11 9595 /tmp/tmpmBovTC/ 1 0.80 1
+11 9596 /tmp/tmpmBovTC/ 3 1.20 1
+11 9597 /tmp/tmpmBovTC/ 2 1.00 1
+11 9598 /tmp/tmpmBovTC/ 2 1.20 1
+11 9599 /tmp/tmpmBovTC/ 2 0.80 1
+11 9600 /tmp/tmpmBovTC/ 3 1.20 1
+11 9602 /tmp/tmpmBovTC/ 2 1.20 1
+11 9605 /tmp/tmpmBovTC/ 2 1.20 1
+11 9601 /tmp/tmpmBovTC/ 2 1.00 1
+11 9603 /tmp/tmpmBovTC/ 3 0.90 1
+11 9604 /tmp/tmpmBovTC/ 2 1.20 1
+
+12 9590 /tmp/tmpmBovTC/ 2 1.20 1
+12 9591 /tmp/tmpmBovTC/ 3 1.20 1
+12 9593 /tmp/tmpmBovTC/ 2 1.40 1
+12 9592 /tmp/tmpmBovTC/ 2 1.20 1
+12 9594 /tmp/tmpmBovTC/ 2 1.60 1
+12 9596 /tmp/tmpmBovTC/ 3 1.20 1
+12 9597 /tmp/tmpmBovTC/ 2 1.00 1
+12 9598 /tmp/tmpmBovTC/ 2 1.20 1
+12 9599 /tmp/tmpmBovTC/ 3 1.20 1
+12 9600 /tmp/tmpmBovTC/ 3 1.20 1
+12 9602 /tmp/tmpmBovTC/ 2 1.20 1
+12 9605 /tmp/tmpmBovTC/ 3 1.80 1
+12 9601 /tmp/tmpmBovTC/ 2 1.00 1
+12 9603 /tmp/tmpmBovTC/ 3 0.90 1
+12 9604 /tmp/tmpmBovTC/ 2 1.20 1
+
+13 9590 /tmp/tmpmBovTC/ 2 1.20 1
+13 9591 /tmp/tmpmBovTC/ 3 1.20 1
+13 9593 /tmp/tmpmBovTC/ 2 1.40 1
+13 9592 /tmp/tmpmBovTC/ 2 1.20 1
+13 9594 /tmp/tmpmBovTC/ 2 1.60 1
+13 9636 /tmp/tmpmBovTC/ 0 0.00 1
+13 9596 /tmp/tmpmBovTC/ 3 1.20 1
+13 9597 /tmp/tmpmBovTC/ 2 1.00 1
+13 9598 /tmp/tmpmBovTC/ 2 1.20 1
+13 9599 /tmp/tmpmBovTC/ 3 1.20 1
+13 9600 /tmp/tmpmBovTC/ 3 1.20 1
+13 9602 /tmp/tmpmBovTC/ 2 1.20 1
+13 9605 /tmp/tmpmBovTC/ 3 1.80 1
+13 9601 /tmp/tmpmBovTC/ 3 1.50 1
+13 9603 /tmp/tmpmBovTC/ 4 1.20 1
+13 9604 /tmp/tmpmBovTC/ 2 1.20 1
+
+14 9590 /tmp/tmpmBovTC/ 2 1.20 1
+14 9591 /tmp/tmpmBovTC/ 3 1.20 1
+14 9593 /tmp/tmpmBovTC/ 2 1.40 1
+14 9592 /tmp/tmpmBovTC/ 2 1.20 1
+14 9594 /tmp/tmpmBovTC/ 2 1.60 1
+14 9636 /tmp/tmpmBovTC/ 0 0.00 1
+14 9596 /tmp/tmpmBovTC/ 3 1.20 1
+14 9597 /tmp/tmpmBovTC/ 3 1.50 1
+14 9598 /tmp/tmpmBovTC/ 2 1.20 1
+14 9599 /tmp/tmpmBovTC/ 3 1.20 1
+14 9600 /tmp/tmpmBovTC/ 4 1.60 1
+14 9602 /tmp/tmpmBovTC/ 3 1.80 1
+14 9605 /tmp/tmpmBovTC/ 3 1.80 1
+14 9601 /tmp/tmpmBovTC/ 3 1.50 1
+14 9603 /tmp/tmpmBovTC/ 4 1.20 1
+14 9604 /tmp/tmpmBovTC/ 2 1.20 1
+
+15 9590 /tmp/tmpmBovTC/ 3 1.80 1
+15 9591 /tmp/tmpmBovTC/ 4 1.60 1
+15 9593 /tmp/tmpmBovTC/ 3 2.10 1
+15 9592 /tmp/tmpmBovTC/ 3 1.80 1
+15 9594 /tmp/tmpmBovTC/ 2 1.60 1
+15 9636 /tmp/tmpmBovTC/ 0 0.00 1
+15 9596 /tmp/tmpmBovTC/ 4 1.60 1
+15 9597 /tmp/tmpmBovTC/ 3 1.50 1
+15 9598 /tmp/tmpmBovTC/ 3 1.80 1
+15 9599 /tmp/tmpmBovTC/ 4 1.60 1
+15 9600 /tmp/tmpmBovTC/ 4 1.60 1
+15 9602 /tmp/tmpmBovTC/ 3 1.80 1
+15 9605 /tmp/tmpmBovTC/ 3 1.80 1
+15 9601 /tmp/tmpmBovTC/ 3 1.50 1
+15 9603 /tmp/tmpmBovTC/ 4 1.20 1
+15 9604 /tmp/tmpmBovTC/ 3 1.80 1
+
+16 9590 /tmp/tmpmBovTC/ 3 1.80 1
+16 9591 /tmp/tmpmBovTC/ 4 1.60 1
+16 9593 /tmp/tmpmBovTC/ 3 2.10 1
+16 9592 /tmp/tmpmBovTC/ 3 1.80 1
+16 9594 /tmp/tmpmBovTC/ 3 2.40 1
+16 9636 /tmp/tmpmBovTC/ 0 0.00 1
+16 9596 /tmp/tmpmBovTC/ 4 1.60 1
+16 9597 /tmp/tmpmBovTC/ 4 2.00 1
+16 9598 /tmp/tmpmBovTC/ 3 1.80 1
+16 9599 /tmp/tmpmBovTC/ 4 1.60 1
+16 9600 /tmp/tmpmBovTC/ 4 1.60 1
+16 9602 /tmp/tmpmBovTC/ 3 1.80 1
+16 9605 /tmp/tmpmBovTC/ 4 2.40 1
+16 9601 /tmp/tmpmBovTC/ 3 1.50 1
+16 9603 /tmp/tmpmBovTC/ 5 1.50 1
+16 9604 /tmp/tmpmBovTC/ 3 1.80 1
+
+17 9590 /tmp/tmpmBovTC/ 3 1.80 1
+17 9591 /tmp/tmpmBovTC/ 4 1.60 1
+17 9593 /tmp/tmpmBovTC/ 3 2.10 1
+17 9592 /tmp/tmpmBovTC/ 3 1.80 1
+17 9594 /tmp/tmpmBovTC/ 3 2.40 1
+17 9636 /tmp/tmpmBovTC/ 1 0.70 1
+17 9596 /tmp/tmpmBovTC/ 4 1.60 1
+17 9597 /tmp/tmpmBovTC/ 4 2.00 1
+17 9598 /tmp/tmpmBovTC/ 3 1.80 1
+17 9599 /tmp/tmpmBovTC/ 4 1.60 1
+17 9600 /tmp/tmpmBovTC/ 4 1.60 1
+17 9602 /tmp/tmpmBovTC/ 3 1.80 1
+17 9605 /tmp/tmpmBovTC/ 4 2.40 1
+17 9601 /tmp/tmpmBovTC/ 4 2.00 1
+17 9603 /tmp/tmpmBovTC/ 6 1.80 1
+17 9604 /tmp/tmpmBovTC/ 3 1.80 1
+
+18 9590 /tmp/tmpmBovTC/ 4 2.40 1
+18 9591 /tmp/tmpmBovTC/ 5 2.00 1
+18 9593 /tmp/tmpmBovTC/ 3 2.10 1
+18 9592 /tmp/tmpmBovTC/ 3 1.80 1
+18 9594 /tmp/tmpmBovTC/ 3 2.40 1
+18 9636 /tmp/tmpmBovTC/ 1 0.70 1
+18 9596 /tmp/tmpmBovTC/ 5 2.00 1
+18 9597 /tmp/tmpmBovTC/ 4 2.00 1
+18 9598 /tmp/tmpmBovTC/ 3 1.80 1
+18 9599 /tmp/tmpmBovTC/ 4 1.60 1
+18 9600 /tmp/tmpmBovTC/ 5 2.00 1
+18 9602 /tmp/tmpmBovTC/ 4 2.40 1
+18 9605 /tmp/tmpmBovTC/ 4 2.40 1
+18 9601 /tmp/tmpmBovTC/ 4 2.00 1
+18 9603 /tmp/tmpmBovTC/ 6 1.80 1
+18 9604 /tmp/tmpmBovTC/ 3 1.80 1
+
+19 9590 /tmp/tmpmBovTC/ 4 2.40 1
+19 9591 /tmp/tmpmBovTC/ 5 2.00 1
+19 9593 /tmp/tmpmBovTC/ 4 2.80 1
+19 9592 /tmp/tmpmBovTC/ 3 1.80 1
+19 9594 /tmp/tmpmBovTC/ 3 2.40 1
+19 9636 /tmp/tmpmBovTC/ 1 0.70 1
+19 9596 /tmp/tmpmBovTC/ 5 2.00 1
+19 9597 /tmp/tmpmBovTC/ 5 2.50 1
+19 9598 /tmp/tmpmBovTC/ 3 1.80 1
+19 9599 /tmp/tmpmBovTC/ 5 2.00 1
+19 9600 /tmp/tmpmBovTC/ 6 2.40 1
+19 9602 /tmp/tmpmBovTC/ 4 2.40 1
+19 9605 /tmp/tmpmBovTC/ 4 2.40 1
+19 9601 /tmp/tmpmBovTC/ 4 2.00 1
+19 9603 /tmp/tmpmBovTC/ 6 1.80 1
+19 9604 /tmp/tmpmBovTC/ 4 2.40 1
+
+20 9590 /tmp/tmpmBovTC/ 4 2.40 1
+20 9591 /tmp/tmpmBovTC/ 5 2.00 1
+20 9593 /tmp/tmpmBovTC/ 4 2.80 1
+20 9592 /tmp/tmpmBovTC/ 4 2.40 1
+20 9594 /tmp/tmpmBovTC/ 3 2.40 1
+20 9636 /tmp/tmpmBovTC/ 1 0.70 1
+20 9596 /tmp/tmpmBovTC/ 5 2.00 1
+20 9597 /tmp/tmpmBovTC/ 5 2.50 1
+20 9598 /tmp/tmpmBovTC/ 4 2.40 1
+20 9599 /tmp/tmpmBovTC/ 5 2.00 1
+20 9600 /tmp/tmpmBovTC/ 6 2.40 1
+20 9602 /tmp/tmpmBovTC/ 4 2.40 1
+20 9605 /tmp/tmpmBovTC/ 4 2.40 1
+20 9601 /tmp/tmpmBovTC/ 4 2.00 1
+20 9603 /tmp/tmpmBovTC/ 7 2.10 1
+20 9604 /tmp/tmpmBovTC/ 4 2.40 1
+
+21 9590 /tmp/tmpmBovTC/ 4 2.40 1
+21 9591 /tmp/tmpmBovTC/ 6 2.40 1
+21 9593 /tmp/tmpmBovTC/ 4 2.80 1
+21 9592 /tmp/tmpmBovTC/ 4 2.40 1
+21 9594 /tmp/tmpmBovTC/ 4 3.20 1
+21 9636 /tmp/tmpmBovTC/ 1 0.70 1
+21 9596 /tmp/tmpmBovTC/ 6 2.40 1
+21 9597 /tmp/tmpmBovTC/ 5 2.50 1
+21 9598 /tmp/tmpmBovTC/ 4 2.40 1
+21 9599 /tmp/tmpmBovTC/ 5 2.00 1
+21 9600 /tmp/tmpmBovTC/ 6 2.40 1
+21 9602 /tmp/tmpmBovTC/ 4 2.40 1
+21 9605 /tmp/tmpmBovTC/ 5 3.00 1
+21 9601 /tmp/tmpmBovTC/ 5 2.50 1
+21 9603 /tmp/tmpmBovTC/ 7 2.10 1
+21 9604 /tmp/tmpmBovTC/ 4 2.40 1
+
+22 9590 /tmp/tmpmBovTC/ 4 2.40 1
+22 9591 /tmp/tmpmBovTC/ 6 2.40 1
+22 9593 /tmp/tmpmBovTC/ 4 2.80 1
+22 9592 /tmp/tmpmBovTC/ 4 2.40 1
+22 9594 /tmp/tmpmBovTC/ 4 3.20 1
+22 9636 /tmp/tmpmBovTC/ 1 0.70 1
+22 9596 /tmp/tmpmBovTC/ 6 2.40 1
+22 9597 /tmp/tmpmBovTC/ 5 2.50 1
+22 9598 /tmp/tmpmBovTC/ 4 2.40 1
+22 9599 /tmp/tmpmBovTC/ 6 2.40 1
+22 9600 /tmp/tmpmBovTC/ 7 2.80 1
+22 9602 /tmp/tmpmBovTC/ 4 2.40 1
+22 9605 /tmp/tmpmBovTC/ 5 3.00 1
+22 9601 /tmp/tmpmBovTC/ 5 2.50 1
+22 9603 /tmp/tmpmBovTC/ 7 2.10 1
+22 9604 /tmp/tmpmBovTC/ 4 2.40 1
+
+23 9590 /tmp/tmpmBovTC/ 5 3.00 1
+23 9591 /tmp/tmpmBovTC/ 7 2.80 1
+23 9593 /tmp/tmpmBovTC/ 4 2.80 1
+23 9592 /tmp/tmpmBovTC/ 5 3.00 1
+23 9594 /tmp/tmpmBovTC/ 4 3.20 1
+23 9636 /tmp/tmpmBovTC/ 2 1.40 1
+23 9596 /tmp/tmpmBovTC/ 6 2.40 1
+23 9597 /tmp/tmpmBovTC/ 6 3.00 1
+23 9598 /tmp/tmpmBovTC/ 4 2.40 1
+23 9599 /tmp/tmpmBovTC/ 6 2.40 1
+23 9600 /tmp/tmpmBovTC/ 7 2.80 1
+23 9602 /tmp/tmpmBovTC/ 5 3.00 1
+23 9605 /tmp/tmpmBovTC/ 5 3.00 1
+23 9601 /tmp/tmpmBovTC/ 5 2.50 1
+23 9603 /tmp/tmpmBovTC/ 8 2.40 1
+23 9604 /tmp/tmpmBovTC/ 5 3.00 1
+
+24 9590 /tmp/tmpmBovTC/ 5 3.00 1
+24 9591 /tmp/tmpmBovTC/ 7 2.80 1
+24 9593 /tmp/tmpmBovTC/ 5 3.50 1
+24 9592 /tmp/tmpmBovTC/ 5 3.00 1
+24 9594 /tmp/tmpmBovTC/ 4 3.20 1
+24 9636 /tmp/tmpmBovTC/ 2 1.40 1
+24 9596 /tmp/tmpmBovTC/ 7 2.80 1
+24 9597 /tmp/tmpmBovTC/ 6 3.00 1
+24 9598 /tmp/tmpmBovTC/ 5 3.00 1
+24 9599 /tmp/tmpmBovTC/ 6 2.40 1
+24 9600 /tmp/tmpmBovTC/ 7 2.80 1
+24 9602 /tmp/tmpmBovTC/ 5 3.00 1
+24 9605 /tmp/tmpmBovTC/ 5 3.00 1
+24 9601 /tmp/tmpmBovTC/ 5 2.50 1
+24 9603 /tmp/tmpmBovTC/ 8 2.40 1
+24 9604 /tmp/tmpmBovTC/ 5 3.00 1
+
+25 9590 /tmp/tmpmBovTC/ 5 3.00 1
+25 9591 /tmp/tmpmBovTC/ 7 2.80 1
+25 9593 /tmp/tmpmBovTC/ 5 3.50 1
+25 9592 /tmp/tmpmBovTC/ 5 3.00 1
+25 9594 /tmp/tmpmBovTC/ 4 3.20 1
+25 9636 /tmp/tmpmBovTC/ 2 1.40 1
+25 9596 /tmp/tmpmBovTC/ 7 2.80 1
+25 9597 /tmp/tmpmBovTC/ 6 3.00 1
+25 9598 /tmp/tmpmBovTC/ 5 3.00 1
+25 9599 /tmp/tmpmBovTC/ 7 2.80 1
+25 9600 /tmp/tmpmBovTC/ 8 3.20 1
+25 9602 /tmp/tmpmBovTC/ 5 3.00 1
+25 9605 /tmp/tmpmBovTC/ 6 3.60 1
+25 9601 /tmp/tmpmBovTC/ 6 3.00 1
+25 9603 /tmp/tmpmBovTC/ 9 2.70 1
+25 9604 /tmp/tmpmBovTC/ 5 3.00 1
+
+26 9590 /tmp/tmpmBovTC/ 5 3.00 1
+26 9591 /tmp/tmpmBovTC/ 8 3.20 1
+26 9593 /tmp/tmpmBovTC/ 5 3.50 1
+26 9592 /tmp/tmpmBovTC/ 5 3.00 1
+26 9594 /tmp/tmpmBovTC/ 4 3.20 1
+26 9636 /tmp/tmpmBovTC/ 2 1.40 1
+26 9596 /tmp/tmpmBovTC/ 8 3.20 1
+26 9597 /tmp/tmpmBovTC/ 6 3.00 1
+26 9598 /tmp/tmpmBovTC/ 5 3.00 1
+26 9599 /tmp/tmpmBovTC/ 7 2.80 1
+26 9600 /tmp/tmpmBovTC/ 8 3.20 1
+26 9602 /tmp/tmpmBovTC/ 6 3.60 1
+26 9605 /tmp/tmpmBovTC/ 6 3.60 1
+26 9601 /tmp/tmpmBovTC/ 6 3.00 1
+26 9603 /tmp/tmpmBovTC/ 9 2.70 1
+26 9604 /tmp/tmpmBovTC/ 5 3.00 1
+
+27 9590 /tmp/tmpmBovTC/ 6 3.60 1
+27 9591 /tmp/tmpmBovTC/ 8 3.20 1
+27 9593 /tmp/tmpmBovTC/ 5 3.50 1
+27 9592 /tmp/tmpmBovTC/ 6 3.60 1
+27 9594 /tmp/tmpmBovTC/ 5 4.00 1
+27 9636 /tmp/tmpmBovTC/ 3 2.10 1
+27 9596 /tmp/tmpmBovTC/ 8 3.20 1
+27 9597 /tmp/tmpmBovTC/ 7 3.50 1
+27 9598 /tmp/tmpmBovTC/ 5 3.00 1
+27 9599 /tmp/tmpmBovTC/ 7 2.80 1
+27 9600 /tmp/tmpmBovTC/ 8 3.20 1
+27 9602 /tmp/tmpmBovTC/ 6 3.60 1
+27 9605 /tmp/tmpmBovTC/ 6 3.60 1
+27 9601 /tmp/tmpmBovTC/ 6 3.00 1
+27 9603 /tmp/tmpmBovTC/ 9 2.70 1
+27 9604 /tmp/tmpmBovTC/ 5 3.00 1
+
+28 9590 /tmp/tmpmBovTC/ 6 3.60 1
+28 9591 /tmp/tmpmBovTC/ 9 3.60 1
+28 9593 /tmp/tmpmBovTC/ 5 3.50 1
+28 9592 /tmp/tmpmBovTC/ 6 3.60 1
+28 9594 /tmp/tmpmBovTC/ 5 4.00 1
+28 9636 /tmp/tmpmBovTC/ 3 2.10 1
+28 9596 /tmp/tmpmBovTC/ 8 3.20 1
+28 9597 /tmp/tmpmBovTC/ 7 3.50 1
+28 9598 /tmp/tmpmBovTC/ 6 3.60 1
+28 9599 /tmp/tmpmBovTC/ 7 2.80 1
+28 9600 /tmp/tmpmBovTC/ 9 3.60 1
+28 9602 /tmp/tmpmBovTC/ 6 3.60 1
+28 9605 /tmp/tmpmBovTC/ 6 3.60 1
+28 9601 /tmp/tmpmBovTC/ 6 3.00 1
+28 9603 /tmp/tmpmBovTC/ 10 3.00 1
+28 9604 /tmp/tmpmBovTC/ 6 3.60 1
+
+29 9590 /tmp/tmpmBovTC/ 6 3.60 1
+29 9591 /tmp/tmpmBovTC/ 9 3.60 1
+29 9593 /tmp/tmpmBovTC/ 6 4.20 1
+29 9592 /tmp/tmpmBovTC/ 6 3.60 1
+29 9594 /tmp/tmpmBovTC/ 5 4.00 1
+29 9636 /tmp/tmpmBovTC/ 3 2.10 1
+29 9596 /tmp/tmpmBovTC/ 9 3.60 1
+29 9597 /tmp/tmpmBovTC/ 7 3.50 1
+29 9598 /tmp/tmpmBovTC/ 6 3.60 1
+29 9599 /tmp/tmpmBovTC/ 8 3.20 1
+29 9600 /tmp/tmpmBovTC/ 9 3.60 1
+29 9602 /tmp/tmpmBovTC/ 6 3.60 1
+29 9605 /tmp/tmpmBovTC/ 7 4.20 1
+29 9601 /tmp/tmpmBovTC/ 7 3.50 1
+29 9603 /tmp/tmpmBovTC/ 10 3.00 1
+29 9604 /tmp/tmpmBovTC/ 6 3.60 1
+
+30 9590 /tmp/tmpmBovTC/ 6 3.60 1
+30 9591 /tmp/tmpmBovTC/ 9 3.60 1
+30 9593 /tmp/tmpmBovTC/ 6 4.20 1
+30 9592 /tmp/tmpmBovTC/ 6 3.60 1
+30 9594 /tmp/tmpmBovTC/ 5 4.00 1
+30 9636 /tmp/tmpmBovTC/ 3 2.10 1
+30 9596 /tmp/tmpmBovTC/ 9 3.60 1
+30 9597 /tmp/tmpmBovTC/ 7 3.50 1
+30 9598 /tmp/tmpmBovTC/ 6 3.60 1
+30 9599 /tmp/tmpmBovTC/ 9 3.60 1
+30 9600 /tmp/tmpmBovTC/ 9 3.60 1
+30 9602 /tmp/tmpmBovTC/ 7 4.20 1
+30 9605 /tmp/tmpmBovTC/ 7 4.20 1
+30 9601 /tmp/tmpmBovTC/ 7 3.50 1
+30 9603 /tmp/tmpmBovTC/ 10 3.00 1
+30 9604 /tmp/tmpmBovTC/ 6 3.60 1
+
+31 9590 /tmp/tmpmBovTC/ 7 4.20 1
+31 9591 /tmp/tmpmBovTC/ 10 4.00 1
+31 9593 /tmp/tmpmBovTC/ 6 4.20 1
+31 9592 /tmp/tmpmBovTC/ 6 3.60 1
+31 9594 /tmp/tmpmBovTC/ 6 4.80 1
+31 9636 /tmp/tmpmBovTC/ 3 2.10 1
+31 9596 /tmp/tmpmBovTC/ 9 3.60 1
+31 9597 /tmp/tmpmBovTC/ 8 4.00 1
+31 9598 /tmp/tmpmBovTC/ 6 3.60 1
+31 9599 /tmp/tmpmBovTC/ 9 3.60 1
+31 9600 /tmp/tmpmBovTC/ 10 4.00 1
+31 9602 /tmp/tmpmBovTC/ 7 4.20 1
+31 9605 /tmp/tmpmBovTC/ 7 4.20 1
+31 9601 /tmp/tmpmBovTC/ 7 3.50 1
+31 9603 /tmp/tmpmBovTC/ 11 3.30 1
+31 9604 /tmp/tmpmBovTC/ 6 3.60 1
+
+32 9590 /tmp/tmpmBovTC/ 7 4.20 1
+32 9591 /tmp/tmpmBovTC/ 10 4.00 1
+32 9593 /tmp/tmpmBovTC/ 6 4.20 1
+32 9592 /tmp/tmpmBovTC/ 7 4.20 1
+32 9594 /tmp/tmpmBovTC/ 6 4.80 1
+32 9636 /tmp/tmpmBovTC/ 4 2.80 1
+32 9596 /tmp/tmpmBovTC/ 10 4.00 1
+32 9597 /tmp/tmpmBovTC/ 8 4.00 1
+32 9598 /tmp/tmpmBovTC/ 6 3.60 1
+32 9599 /tmp/tmpmBovTC/ 10 4.00 1
+32 9600 /tmp/tmpmBovTC/ 10 4.00 1
+32 9602 /tmp/tmpmBovTC/ 7 4.20 1
+32 9605 /tmp/tmpmBovTC/ 7 4.20 1
+32 9601 /tmp/tmpmBovTC/ 8 4.00 1
+32 9603 /tmp/tmpmBovTC/ 11 3.30 1
+32 9604 /tmp/tmpmBovTC/ 7 4.20 1
+
+
+
+test manyclients2 PASSED (6 of 6)
+ (Check that when a client leaves, another can enter)
+
+starting valgrind
+
+**********************************************************************
+
+Test valgrind
+essentially, manyclients2 run for longer and with valgrind
+
+**********************************************************************
+key 5176 priority 1 sleeptime_ns 600000000 cputime_ns 400000000
+key 5176 priority 1 sleeptime_ns 700000000 cputime_ns 300000000
+key 5176 priority 1 sleeptime_ns 300000000 cputime_ns 700000000
+key 5176 priority 1 sleeptime_ns 200000000 cputime_ns 800000000
+key 5176 priority 1 sleeptime_ns 200000000 cputime_ns 800000000
+key 5176 priority 1 sleeptime_ns 200000000 cputime_ns 800000000
+key 5176 priority 1 sleeptime_ns 500000000 cputime_ns 500000000
+key 5176 priority 1 sleeptime_ns 400000000 cputime_ns 600000000
+key 5176 priority 1 sleeptime_ns 600000000 cputime_ns 400000000
+key 5176 priority 1 sleeptime_ns 700000000 cputime_ns 300000000
+key 5176 priority 1 sleeptime_ns 700000000 cputime_ns 300000000
+key 5176 priority 1 sleeptime_ns 200000000 cputime_ns 800000000
+key 5176 priority 1 sleeptime_ns 300000000 cputime_ns 700000000
+key 5176 priority 1 sleeptime_ns 500000000 cputime_ns 500000000
+key 5176 priority 1 sleeptime_ns 700000000 cputime_ns 300000000
+key 5176 priority 1 sleeptime_ns 300000000 cputime_ns 700000000
+key 5176 priority 1 sleeptime_ns 200000000 cputime_ns 800000000
+running server with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpmBovTC/p/17.xml /tmp/tmpmBovTC/p/stats_server -k 5176
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpmBovTC/p/0.xml /tmp/tmpmBovTC/p/stats_client -s 700000000 -p 1 -c 300000000 -k 5176
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpmBovTC/p/1.xml /tmp/tmpmBovTC/p/stats_client -k 5176 -s 200000000 -p 1 -c 800000000
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpmBovTC/p/2.xml /tmp/tmpmBovTC/p/stats_client -s 600000000 -c 400000000 -p 1 -k 5176
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpmBovTC/p/3.xml /tmp/tmpmBovTC/p/stats_client -s 500000000 -p 1 -c 500000000 -k 5176
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpmBovTC/p/4.xml /tmp/tmpmBovTC/p/stats_client -s 600000000 -p 1 -k 5176 -c 400000000
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpmBovTC/p/5.xml /tmp/tmpmBovTC/p/stats_client -s 200000000 -k 5176 -c 800000000 -p 1
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpmBovTC/p/6.xml /tmp/tmpmBovTC/p/stats_client -s 300000000 -p 1 -k 5176 -c 700000000
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpmBovTC/p/7.xml /tmp/tmpmBovTC/p/stats_client -p 1 -k 5176 -s 500000000 -c 500000000
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpmBovTC/p/8.xml /tmp/tmpmBovTC/p/stats_client -c 300000000 -k 5176 -s 700000000 -p 1
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpmBovTC/p/9.xml /tmp/tmpmBovTC/p/stats_client -p 1 -s 300000000 -k 5176 -c 700000000
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpmBovTC/p/10.xml /tmp/tmpmBovTC/p/stats_client -c 800000000 -p 1 -k 5176 -s 200000000
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpmBovTC/p/11.xml /tmp/tmpmBovTC/p/stats_client -s 700000000 -c 300000000 -k 5176 -p 1
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpmBovTC/p/12.xml /tmp/tmpmBovTC/p/stats_client -p 1 -s 700000000 -c 300000000 -k 5176
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpmBovTC/p/13.xml /tmp/tmpmBovTC/p/stats_client -s 200000000 -p 1 -k 5176 -c 800000000
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpmBovTC/p/14.xml /tmp/tmpmBovTC/p/stats_client -p 1 -c 700000000 -s 300000000 -k 5176
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpmBovTC/p/15.xml /tmp/tmpmBovTC/p/stats_client -p 1 -k 5176 -c 800000000 -s 200000000
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpmBovTC/p/16.xml /tmp/tmpmBovTC/p/stats_client -s 400000000 -p 1 -c 600000000 -k 5176
+server output:
+
+
+3 9676 /tmp/tmpmBovTC/ 0 0.00 1
+3 9674 /tmp/tmpmBovTC/ 0 0.00 1
+
+4 9676 /tmp/tmpmBovTC/ 0 0.00 1
+4 9674 /tmp/tmpmBovTC/ 0 0.00 1
+4 9672 /tmp/tmpmBovTC/ 0 0.00 1
+4 9671 /tmp/tmpmBovTC/ 0 0.00 1
+4 9668 /tmp/tmpmBovTC/ 0 0.00 1
+4 9678 /tmp/tmpmBovTC/ 0 0.00 1
+4 9675 /tmp/tmpmBovTC/ 0 0.00 1
+4 9681 /tmp/tmpmBovTC/ 0 0.00 1
+4 9682 /tmp/tmpmBovTC/ 0 0.00 1
+4 9679 /tmp/tmpmBovTC/ 0 0.00 1
+4 9673 /tmp/tmpmBovTC/ 0 0.00 1
+4 9677 /tmp/tmpmBovTC/ 0 0.00 1
+4 9667 /tmp/tmpmBovTC/ 0 0.00 1
+4 9680 /tmp/tmpmBovTC/ 0 0.00 1
+4 9669 /tmp/tmpmBovTC/ 0 0.00 1
+4 9670 /tmp/tmpmBovTC/ 0 0.00 1
+
+5 9676 /tmp/tmpmBovTC/ 0 0.00 1
+5 9674 /tmp/tmpmBovTC/ 0 0.00 1
+5 9672 /tmp/tmpmBovTC/ 0 0.00 1
+5 9671 /tmp/tmpmBovTC/ 0 0.00 1
+5 9668 /tmp/tmpmBovTC/ 0 0.00 1
+5 9678 /tmp/tmpmBovTC/ 0 0.00 1
+5 9675 /tmp/tmpmBovTC/ 0 0.00 1
+5 9681 /tmp/tmpmBovTC/ 0 0.00 1
+5 9682 /tmp/tmpmBovTC/ 0 0.00 1
+5 9679 /tmp/tmpmBovTC/ 0 0.00 1
+5 9673 /tmp/tmpmBovTC/ 0 0.00 1
+5 9677 /tmp/tmpmBovTC/ 0 0.00 1
+5 9667 /tmp/tmpmBovTC/ 0 0.00 1
+5 9680 /tmp/tmpmBovTC/ 0 0.00 1
+5 9669 /tmp/tmpmBovTC/ 0 0.00 1
+5 9670 /tmp/tmpmBovTC/ 0 0.00 1
+
+6 9676 /tmp/tmpmBovTC/ 0 0.00 1
+6 9674 /tmp/tmpmBovTC/ 1 0.50 1
+6 9672 /tmp/tmpmBovTC/ 0 0.00 1
+6 9671 /tmp/tmpmBovTC/ 0 0.00 1
+6 9668 /tmp/tmpmBovTC/ 0 0.00 1
+6 9678 /tmp/tmpmBovTC/ 0 0.00 1
+6 9675 /tmp/tmpmBovTC/ 0 0.00 1
+6 9681 /tmp/tmpmBovTC/ 0 0.00 1
+6 9682 /tmp/tmpmBovTC/ 0 0.00 1
+6 9679 /tmp/tmpmBovTC/ 0 0.00 1
+6 9673 /tmp/tmpmBovTC/ 0 0.00 1
+6 9677 /tmp/tmpmBovTC/ 0 0.00 1
+6 9667 /tmp/tmpmBovTC/ 0 0.00 1
+6 9680 /tmp/tmpmBovTC/ 0 0.00 1
+6 9669 /tmp/tmpmBovTC/ 0 0.00 1
+6 9670 /tmp/tmpmBovTC/ 0 0.00 1
+
+7 9676 /tmp/tmpmBovTC/ 1 0.70 1
+7 9674 /tmp/tmpmBovTC/ 1 0.50 1
+7 9672 /tmp/tmpmBovTC/ 0 0.00 1
+7 9671 /tmp/tmpmBovTC/ 0 0.00 1
+7 9668 /tmp/tmpmBovTC/ 0 0.00 1
+7 9678 /tmp/tmpmBovTC/ 1 0.30 1
+7 9675 /tmp/tmpmBovTC/ 1 0.30 1
+7 9681 /tmp/tmpmBovTC/ 0 0.00 1
+7 9682 /tmp/tmpmBovTC/ 0 0.00 1
+7 9679 /tmp/tmpmBovTC/ 1 0.30 1
+7 9673 /tmp/tmpmBovTC/ 0 0.00 1
+7 9677 /tmp/tmpmBovTC/ 0 0.00 1
+7 9667 /tmp/tmpmBovTC/ 1 0.30 1
+7 9680 /tmp/tmpmBovTC/ 0 0.00 1
+7 9669 /tmp/tmpmBovTC/ 0 0.00 1
+7 9670 /tmp/tmpmBovTC/ 1 0.50 1
+
+8 9676 /tmp/tmpmBovTC/ 1 0.70 1
+8 9674 /tmp/tmpmBovTC/ 1 0.50 1
+8 9672 /tmp/tmpmBovTC/ 0 0.00 1
+8 9671 /tmp/tmpmBovTC/ 1 0.40 1
+8 9668 /tmp/tmpmBovTC/ 0 0.00 1
+8 9678 /tmp/tmpmBovTC/ 1 0.30 1
+8 9675 /tmp/tmpmBovTC/ 1 0.30 1
+8 9681 /tmp/tmpmBovTC/ 0 0.00 1
+8 9682 /tmp/tmpmBovTC/ 0 0.00 1
+8 9679 /tmp/tmpmBovTC/ 1 0.30 1
+8 9673 /tmp/tmpmBovTC/ 0 0.00 1
+8 9677 /tmp/tmpmBovTC/ 0 0.00 1
+8 9667 /tmp/tmpmBovTC/ 1 0.30 1
+8 9680 /tmp/tmpmBovTC/ 0 0.00 1
+8 9669 /tmp/tmpmBovTC/ 1 0.40 1
+8 9670 /tmp/tmpmBovTC/ 1 0.50 1
+
+9 9676 /tmp/tmpmBovTC/ 1 0.70 1
+9 9674 /tmp/tmpmBovTC/ 1 0.50 1
+9 9672 /tmp/tmpmBovTC/ 1 0.80 1
+9 9671 /tmp/tmpmBovTC/ 1 0.40 1
+9 9668 /tmp/tmpmBovTC/ 1 0.80 1
+9 9678 /tmp/tmpmBovTC/ 1 0.30 1
+9 9675 /tmp/tmpmBovTC/ 1 0.30 1
+9 9681 /tmp/tmpmBovTC/ 1 0.70 1
+9 9682 /tmp/tmpmBovTC/ 0 0.00 1
+9 9679 /tmp/tmpmBovTC/ 1 0.30 1
+9 9673 /tmp/tmpmBovTC/ 1 0.70 1
+9 9677 /tmp/tmpmBovTC/ 0 0.00 1
+9 9667 /tmp/tmpmBovTC/ 2 0.60 1
+9 9680 /tmp/tmpmBovTC/ 0 0.00 1
+9 9669 /tmp/tmpmBovTC/ 1 0.40 1
+9 9670 /tmp/tmpmBovTC/ 1 0.50 1
+
+10 9676 /tmp/tmpmBovTC/ 1 0.70 1
+10 9674 /tmp/tmpmBovTC/ 2 1.00 1
+10 9672 /tmp/tmpmBovTC/ 1 0.80 1
+10 9671 /tmp/tmpmBovTC/ 1 0.40 1
+10 9668 /tmp/tmpmBovTC/ 1 0.80 1
+10 9678 /tmp/tmpmBovTC/ 2 0.60 1
+10 9675 /tmp/tmpmBovTC/ 2 0.60 1
+10 9681 /tmp/tmpmBovTC/ 1 0.70 1
+10 9682 /tmp/tmpmBovTC/ 1 0.80 1
+10 9679 /tmp/tmpmBovTC/ 2 0.60 1
+10 9673 /tmp/tmpmBovTC/ 1 0.70 1
+10 9677 /tmp/tmpmBovTC/ 1 0.80 1
+10 9667 /tmp/tmpmBovTC/ 2 0.60 1
+10 9680 /tmp/tmpmBovTC/ 1 0.80 1
+10 9669 /tmp/tmpmBovTC/ 1 0.40 1
+10 9670 /tmp/tmpmBovTC/ 1 0.50 1
+
+11 9676 /tmp/tmpmBovTC/ 1 0.70 1
+11 9674 /tmp/tmpmBovTC/ 2 1.00 1
+11 9672 /tmp/tmpmBovTC/ 1 0.80 1
+11 9668 /tmp/tmpmBovTC/ 1 0.80 1
+11 9678 /tmp/tmpmBovTC/ 2 0.60 1
+11 9675 /tmp/tmpmBovTC/ 2 0.60 1
+11 9681 /tmp/tmpmBovTC/ 1 0.70 1
+11 9682 /tmp/tmpmBovTC/ 1 0.80 1
+11 9679 /tmp/tmpmBovTC/ 2 0.60 1
+11 9673 /tmp/tmpmBovTC/ 1 0.70 1
+11 9677 /tmp/tmpmBovTC/ 1 0.80 1
+11 9667 /tmp/tmpmBovTC/ 3 0.90 1
+11 9680 /tmp/tmpmBovTC/ 1 0.80 1
+11 9669 /tmp/tmpmBovTC/ 2 0.80 1
+11 9670 /tmp/tmpmBovTC/ 2 1.00 1
+
+12 9676 /tmp/tmpmBovTC/ 2 1.40 1
+12 9674 /tmp/tmpmBovTC/ 2 1.00 1
+12 9672 /tmp/tmpmBovTC/ 1 0.80 1
+12 9668 /tmp/tmpmBovTC/ 1 0.80 1
+12 9678 /tmp/tmpmBovTC/ 3 0.90 1
+12 9675 /tmp/tmpmBovTC/ 3 0.90 1
+12 9681 /tmp/tmpmBovTC/ 1 0.70 1
+12 9682 /tmp/tmpmBovTC/ 1 0.80 1
+12 9679 /tmp/tmpmBovTC/ 3 0.90 1
+12 9673 /tmp/tmpmBovTC/ 1 0.70 1
+12 9677 /tmp/tmpmBovTC/ 1 0.80 1
+12 9667 /tmp/tmpmBovTC/ 3 0.90 1
+12 9680 /tmp/tmpmBovTC/ 1 0.80 1
+12 9669 /tmp/tmpmBovTC/ 2 0.80 1
+12 9670 /tmp/tmpmBovTC/ 2 1.00 1
+
+13 9676 /tmp/tmpmBovTC/ 2 1.40 1
+13 9674 /tmp/tmpmBovTC/ 3 1.50 1
+13 9672 /tmp/tmpmBovTC/ 1 0.80 1
+13 9668 /tmp/tmpmBovTC/ 2 1.60 1
+13 9678 /tmp/tmpmBovTC/ 3 0.90 1
+13 9675 /tmp/tmpmBovTC/ 3 0.90 1
+13 9681 /tmp/tmpmBovTC/ 1 0.70 1
+13 9682 /tmp/tmpmBovTC/ 1 0.80 1
+13 9679 /tmp/tmpmBovTC/ 3 0.90 1
+13 9673 /tmp/tmpmBovTC/ 1 0.70 1
+13 9677 /tmp/tmpmBovTC/ 1 0.80 1
+13 9667 /tmp/tmpmBovTC/ 3 0.90 1
+13 9680 /tmp/tmpmBovTC/ 1 0.80 1
+13 9669 /tmp/tmpmBovTC/ 2 0.80 1
+13 9670 /tmp/tmpmBovTC/ 2 1.00 1
+
+14 9676 /tmp/tmpmBovTC/ 2 1.40 1
+14 9674 /tmp/tmpmBovTC/ 3 1.50 1
+14 9672 /tmp/tmpmBovTC/ 2 1.60 1
+14 9668 /tmp/tmpmBovTC/ 2 1.60 1
+14 9678 /tmp/tmpmBovTC/ 3 0.90 1
+14 9675 /tmp/tmpmBovTC/ 3 0.90 1
+14 9681 /tmp/tmpmBovTC/ 2 1.40 1
+14 9682 /tmp/tmpmBovTC/ 1 0.80 1
+14 9679 /tmp/tmpmBovTC/ 3 0.90 1
+14 9673 /tmp/tmpmBovTC/ 2 1.40 1
+14 9677 /tmp/tmpmBovTC/ 1 0.80 1
+14 9667 /tmp/tmpmBovTC/ 4 1.20 1
+14 9680 /tmp/tmpmBovTC/ 1 0.80 1
+14 9669 /tmp/tmpmBovTC/ 3 1.20 1
+14 9670 /tmp/tmpmBovTC/ 2 1.00 1
+
+15 9676 /tmp/tmpmBovTC/ 2 1.40 1
+15 9674 /tmp/tmpmBovTC/ 3 1.50 1
+15 9672 /tmp/tmpmBovTC/ 2 1.60 1
+15 9685 /tmp/tmpmBovTC/ 0 0.00 1
+15 9668 /tmp/tmpmBovTC/ 2 1.60 1
+15 9678 /tmp/tmpmBovTC/ 4 1.20 1
+15 9675 /tmp/tmpmBovTC/ 4 1.20 1
+15 9681 /tmp/tmpmBovTC/ 2 1.40 1
+15 9682 /tmp/tmpmBovTC/ 2 1.60 1
+15 9679 /tmp/tmpmBovTC/ 4 1.20 1
+15 9673 /tmp/tmpmBovTC/ 2 1.40 1
+15 9677 /tmp/tmpmBovTC/ 1 0.80 1
+15 9667 /tmp/tmpmBovTC/ 4 1.20 1
+15 9680 /tmp/tmpmBovTC/ 1 0.80 1
+15 9669 /tmp/tmpmBovTC/ 3 1.20 1
+15 9670 /tmp/tmpmBovTC/ 3 1.50 1
+
+16 9676 /tmp/tmpmBovTC/ 2 1.40 1
+16 9674 /tmp/tmpmBovTC/ 3 1.50 1
+16 9672 /tmp/tmpmBovTC/ 2 1.60 1
+16 9685 /tmp/tmpmBovTC/ 0 0.00 1
+16 9668 /tmp/tmpmBovTC/ 2 1.60 1
+16 9678 /tmp/tmpmBovTC/ 4 1.20 1
+16 9675 /tmp/tmpmBovTC/ 4 1.20 1
+16 9681 /tmp/tmpmBovTC/ 2 1.40 1
+16 9682 /tmp/tmpmBovTC/ 2 1.60 1
+16 9679 /tmp/tmpmBovTC/ 4 1.20 1
+16 9673 /tmp/tmpmBovTC/ 2 1.40 1
+16 9677 /tmp/tmpmBovTC/ 2 1.60 1
+16 9667 /tmp/tmpmBovTC/ 4 1.20 1
+16 9680 /tmp/tmpmBovTC/ 2 1.60 1
+16 9669 /tmp/tmpmBovTC/ 4 1.60 1
+16 9670 /tmp/tmpmBovTC/ 3 1.50 1
+
+17 9676 /tmp/tmpmBovTC/ 3 2.10 1
+17 9674 /tmp/tmpmBovTC/ 4 2.00 1
+17 9672 /tmp/tmpmBovTC/ 2 1.60 1
+17 9685 /tmp/tmpmBovTC/ 0 0.00 1
+17 9668 /tmp/tmpmBovTC/ 2 1.60 1
+17 9678 /tmp/tmpmBovTC/ 4 1.20 1
+17 9675 /tmp/tmpmBovTC/ 4 1.20 1
+17 9681 /tmp/tmpmBovTC/ 2 1.40 1
+17 9682 /tmp/tmpmBovTC/ 2 1.60 1
+17 9679 /tmp/tmpmBovTC/ 4 1.20 1
+17 9673 /tmp/tmpmBovTC/ 2 1.40 1
+17 9677 /tmp/tmpmBovTC/ 2 1.60 1
+17 9667 /tmp/tmpmBovTC/ 5 1.50 1
+17 9680 /tmp/tmpmBovTC/ 2 1.60 1
+17 9669 /tmp/tmpmBovTC/ 4 1.60 1
+17 9670 /tmp/tmpmBovTC/ 3 1.50 1
+
+18 9676 /tmp/tmpmBovTC/ 3 2.10 1
+18 9674 /tmp/tmpmBovTC/ 4 2.00 1
+18 9672 /tmp/tmpmBovTC/ 2 1.60 1
+18 9685 /tmp/tmpmBovTC/ 0 0.00 1
+18 9668 /tmp/tmpmBovTC/ 3 2.40 1
+18 9678 /tmp/tmpmBovTC/ 5 1.50 1
+18 9675 /tmp/tmpmBovTC/ 5 1.50 1
+18 9681 /tmp/tmpmBovTC/ 2 1.40 1
+18 9682 /tmp/tmpmBovTC/ 3 2.40 1
+18 9679 /tmp/tmpmBovTC/ 5 1.50 1
+18 9673 /tmp/tmpmBovTC/ 2 1.40 1
+18 9677 /tmp/tmpmBovTC/ 2 1.60 1
+18 9667 /tmp/tmpmBovTC/ 5 1.50 1
+18 9680 /tmp/tmpmBovTC/ 2 1.60 1
+18 9669 /tmp/tmpmBovTC/ 4 1.60 1
+18 9670 /tmp/tmpmBovTC/ 4 2.00 1
+
+19 9676 /tmp/tmpmBovTC/ 3 2.10 1
+19 9674 /tmp/tmpmBovTC/ 4 2.00 1
+19 9672 /tmp/tmpmBovTC/ 2 1.60 1
+19 9685 /tmp/tmpmBovTC/ 0 0.00 1
+19 9668 /tmp/tmpmBovTC/ 3 2.40 1
+19 9678 /tmp/tmpmBovTC/ 5 1.50 1
+19 9675 /tmp/tmpmBovTC/ 6 1.80 1
+19 9681 /tmp/tmpmBovTC/ 3 2.10 1
+19 9682 /tmp/tmpmBovTC/ 3 2.40 1
+19 9679 /tmp/tmpmBovTC/ 5 1.50 1
+19 9673 /tmp/tmpmBovTC/ 3 2.10 1
+19 9677 /tmp/tmpmBovTC/ 2 1.60 1
+19 9667 /tmp/tmpmBovTC/ 6 1.80 1
+19 9680 /tmp/tmpmBovTC/ 2 1.60 1
+19 9669 /tmp/tmpmBovTC/ 5 2.00 1
+19 9670 /tmp/tmpmBovTC/ 4 2.00 1
+
+20 9676 /tmp/tmpmBovTC/ 3 2.10 1
+20 9674 /tmp/tmpmBovTC/ 4 2.00 1
+20 9672 /tmp/tmpmBovTC/ 3 2.40 1
+20 9685 /tmp/tmpmBovTC/ 1 0.60 1
+20 9668 /tmp/tmpmBovTC/ 3 2.40 1
+20 9678 /tmp/tmpmBovTC/ 6 1.80 1
+20 9675 /tmp/tmpmBovTC/ 6 1.80 1
+20 9681 /tmp/tmpmBovTC/ 3 2.10 1
+20 9682 /tmp/tmpmBovTC/ 3 2.40 1
+20 9679 /tmp/tmpmBovTC/ 6 1.80 1
+20 9673 /tmp/tmpmBovTC/ 3 2.10 1
+20 9677 /tmp/tmpmBovTC/ 2 1.60 1
+20 9667 /tmp/tmpmBovTC/ 6 1.80 1
+20 9680 /tmp/tmpmBovTC/ 2 1.60 1
+20 9669 /tmp/tmpmBovTC/ 5 2.00 1
+20 9670 /tmp/tmpmBovTC/ 4 2.00 1
+
+21 9676 /tmp/tmpmBovTC/ 3 2.10 1
+21 9674 /tmp/tmpmBovTC/ 5 2.50 1
+21 9672 /tmp/tmpmBovTC/ 3 2.40 1
+21 9685 /tmp/tmpmBovTC/ 1 0.60 1
+21 9668 /tmp/tmpmBovTC/ 3 2.40 1
+21 9678 /tmp/tmpmBovTC/ 6 1.80 1
+21 9675 /tmp/tmpmBovTC/ 6 1.80 1
+21 9681 /tmp/tmpmBovTC/ 3 2.10 1
+21 9682 /tmp/tmpmBovTC/ 4 3.20 1
+21 9679 /tmp/tmpmBovTC/ 6 1.80 1
+21 9673 /tmp/tmpmBovTC/ 3 2.10 1
+21 9677 /tmp/tmpmBovTC/ 3 2.40 1
+21 9667 /tmp/tmpmBovTC/ 6 1.80 1
+21 9680 /tmp/tmpmBovTC/ 3 2.40 1
+21 9669 /tmp/tmpmBovTC/ 5 2.00 1
+21 9670 /tmp/tmpmBovTC/ 4 2.00 1
+
+22 9676 /tmp/tmpmBovTC/ 4 2.80 1
+22 9674 /tmp/tmpmBovTC/ 5 2.50 1
+22 9672 /tmp/tmpmBovTC/ 3 2.40 1
+22 9685 /tmp/tmpmBovTC/ 1 0.60 1
+22 9668 /tmp/tmpmBovTC/ 3 2.40 1
+22 9678 /tmp/tmpmBovTC/ 6 1.80 1
+22 9675 /tmp/tmpmBovTC/ 7 2.10 1
+22 9681 /tmp/tmpmBovTC/ 3 2.10 1
+22 9682 /tmp/tmpmBovTC/ 4 3.20 1
+22 9679 /tmp/tmpmBovTC/ 6 1.80 1
+22 9673 /tmp/tmpmBovTC/ 3 2.10 1
+22 9677 /tmp/tmpmBovTC/ 3 2.40 1
+22 9667 /tmp/tmpmBovTC/ 7 2.10 1
+22 9680 /tmp/tmpmBovTC/ 3 2.40 1
+22 9669 /tmp/tmpmBovTC/ 6 2.40 1
+22 9670 /tmp/tmpmBovTC/ 5 2.50 1
+
+23 9676 /tmp/tmpmBovTC/ 4 2.80 1
+23 9674 /tmp/tmpmBovTC/ 5 2.50 1
+23 9672 /tmp/tmpmBovTC/ 3 2.40 1
+23 9685 /tmp/tmpmBovTC/ 1 0.60 1
+23 9668 /tmp/tmpmBovTC/ 3 2.40 1
+23 9678 /tmp/tmpmBovTC/ 7 2.10 1
+23 9675 /tmp/tmpmBovTC/ 7 2.10 1
+23 9681 /tmp/tmpmBovTC/ 3 2.10 1
+23 9682 /tmp/tmpmBovTC/ 4 3.20 1
+23 9679 /tmp/tmpmBovTC/ 7 2.10 1
+23 9673 /tmp/tmpmBovTC/ 3 2.10 1
+23 9677 /tmp/tmpmBovTC/ 3 2.40 1
+23 9667 /tmp/tmpmBovTC/ 7 2.10 1
+23 9680 /tmp/tmpmBovTC/ 3 2.40 1
+23 9669 /tmp/tmpmBovTC/ 6 2.40 1
+23 9670 /tmp/tmpmBovTC/ 5 2.50 1
+
+24 9676 /tmp/tmpmBovTC/ 4 2.80 1
+24 9674 /tmp/tmpmBovTC/ 6 3.00 1
+24 9672 /tmp/tmpmBovTC/ 3 2.40 1
+24 9685 /tmp/tmpmBovTC/ 2 1.20 1
+24 9668 /tmp/tmpmBovTC/ 4 3.20 1
+24 9678 /tmp/tmpmBovTC/ 7 2.10 1
+24 9675 /tmp/tmpmBovTC/ 7 2.10 1
+24 9681 /tmp/tmpmBovTC/ 4 2.80 1
+24 9682 /tmp/tmpmBovTC/ 4 3.20 1
+24 9679 /tmp/tmpmBovTC/ 7 2.10 1
+24 9673 /tmp/tmpmBovTC/ 4 2.80 1
+24 9677 /tmp/tmpmBovTC/ 3 2.40 1
+24 9667 /tmp/tmpmBovTC/ 7 2.10 1
+24 9680 /tmp/tmpmBovTC/ 3 2.40 1
+24 9669 /tmp/tmpmBovTC/ 6 2.40 1
+24 9670 /tmp/tmpmBovTC/ 5 2.50 1
+
+25 9676 /tmp/tmpmBovTC/ 4 2.80 1
+25 9674 /tmp/tmpmBovTC/ 6 3.00 1
+25 9672 /tmp/tmpmBovTC/ 4 3.20 1
+25 9685 /tmp/tmpmBovTC/ 2 1.20 1
+25 9668 /tmp/tmpmBovTC/ 4 3.20 1
+25 9678 /tmp/tmpmBovTC/ 7 2.10 1
+25 9675 /tmp/tmpmBovTC/ 8 2.40 1
+25 9681 /tmp/tmpmBovTC/ 4 2.80 1
+25 9682 /tmp/tmpmBovTC/ 4 3.20 1
+25 9679 /tmp/tmpmBovTC/ 8 2.40 1
+25 9673 /tmp/tmpmBovTC/ 4 2.80 1
+25 9677 /tmp/tmpmBovTC/ 3 2.40 1
+25 9667 /tmp/tmpmBovTC/ 8 2.40 1
+25 9680 /tmp/tmpmBovTC/ 3 2.40 1
+25 9669 /tmp/tmpmBovTC/ 6 2.40 1
+25 9670 /tmp/tmpmBovTC/ 5 2.50 1
+
+26 9676 /tmp/tmpmBovTC/ 5 3.50 1
+26 9674 /tmp/tmpmBovTC/ 6 3.00 1
+26 9672 /tmp/tmpmBovTC/ 4 3.20 1
+26 9685 /tmp/tmpmBovTC/ 2 1.20 1
+26 9668 /tmp/tmpmBovTC/ 4 3.20 1
+26 9678 /tmp/tmpmBovTC/ 8 2.40 1
+26 9675 /tmp/tmpmBovTC/ 8 2.40 1
+26 9681 /tmp/tmpmBovTC/ 4 2.80 1
+26 9682 /tmp/tmpmBovTC/ 4 3.20 1
+26 9679 /tmp/tmpmBovTC/ 8 2.40 1
+26 9673 /tmp/tmpmBovTC/ 4 2.80 1
+26 9677 /tmp/tmpmBovTC/ 4 3.20 1
+26 9667 /tmp/tmpmBovTC/ 8 2.40 1
+26 9680 /tmp/tmpmBovTC/ 3 2.40 1
+26 9669 /tmp/tmpmBovTC/ 7 2.80 1
+26 9670 /tmp/tmpmBovTC/ 5 2.50 1
+
+27 9676 /tmp/tmpmBovTC/ 5 3.50 1
+27 9674 /tmp/tmpmBovTC/ 6 3.00 1
+27 9672 /tmp/tmpmBovTC/ 4 3.20 1
+27 9685 /tmp/tmpmBovTC/ 2 1.20 1
+27 9668 /tmp/tmpmBovTC/ 4 3.20 1
+27 9678 /tmp/tmpmBovTC/ 8 2.40 1
+27 9675 /tmp/tmpmBovTC/ 8 2.40 1
+27 9681 /tmp/tmpmBovTC/ 4 2.80 1
+27 9682 /tmp/tmpmBovTC/ 5 4.00 1
+27 9679 /tmp/tmpmBovTC/ 8 2.40 1
+27 9673 /tmp/tmpmBovTC/ 4 2.80 1
+27 9677 /tmp/tmpmBovTC/ 4 3.20 1
+27 9667 /tmp/tmpmBovTC/ 8 2.40 1
+27 9680 /tmp/tmpmBovTC/ 3 2.40 1
+27 9669 /tmp/tmpmBovTC/ 7 2.80 1
+27 9670 /tmp/tmpmBovTC/ 6 3.00 1
+
+28 9676 /tmp/tmpmBovTC/ 5 3.50 1
+28 9674 /tmp/tmpmBovTC/ 7 3.50 1
+28 9672 /tmp/tmpmBovTC/ 4 3.20 1
+28 9685 /tmp/tmpmBovTC/ 2 1.20 1
+28 9668 /tmp/tmpmBovTC/ 4 3.20 1
+28 9678 /tmp/tmpmBovTC/ 9 2.70 1
+28 9675 /tmp/tmpmBovTC/ 9 2.70 1
+28 9681 /tmp/tmpmBovTC/ 4 2.80 1
+28 9682 /tmp/tmpmBovTC/ 5 4.00 1
+28 9679 /tmp/tmpmBovTC/ 9 2.70 1
+28 9673 /tmp/tmpmBovTC/ 4 2.80 1
+28 9677 /tmp/tmpmBovTC/ 4 3.20 1
+28 9667 /tmp/tmpmBovTC/ 9 2.70 1
+28 9680 /tmp/tmpmBovTC/ 4 3.20 1
+28 9669 /tmp/tmpmBovTC/ 7 2.80 1
+28 9670 /tmp/tmpmBovTC/ 6 3.00 1
+
+29 9676 /tmp/tmpmBovTC/ 5 3.50 1
+29 9674 /tmp/tmpmBovTC/ 7 3.50 1
+29 9672 /tmp/tmpmBovTC/ 4 3.20 1
+29 9685 /tmp/tmpmBovTC/ 2 1.20 1
+29 9668 /tmp/tmpmBovTC/ 5 4.00 1
+29 9678 /tmp/tmpmBovTC/ 9 2.70 1
+29 9675 /tmp/tmpmBovTC/ 9 2.70 1
+29 9681 /tmp/tmpmBovTC/ 5 3.50 1
+29 9682 /tmp/tmpmBovTC/ 5 4.00 1
+29 9679 /tmp/tmpmBovTC/ 9 2.70 1
+29 9673 /tmp/tmpmBovTC/ 4 2.80 1
+29 9677 /tmp/tmpmBovTC/ 4 3.20 1
+29 9667 /tmp/tmpmBovTC/ 9 2.70 1
+29 9680 /tmp/tmpmBovTC/ 4 3.20 1
+29 9669 /tmp/tmpmBovTC/ 8 3.20 1
+29 9670 /tmp/tmpmBovTC/ 6 3.00 1
+
+30 9676 /tmp/tmpmBovTC/ 5 3.50 1
+30 9674 /tmp/tmpmBovTC/ 7 3.50 1
+30 9672 /tmp/tmpmBovTC/ 4 3.20 1
+30 9685 /tmp/tmpmBovTC/ 3 1.80 1
+30 9668 /tmp/tmpmBovTC/ 5 4.00 1
+30 9678 /tmp/tmpmBovTC/ 9 2.70 1
+30 9675 /tmp/tmpmBovTC/ 9 2.70 1
+30 9681 /tmp/tmpmBovTC/ 5 3.50 1
+30 9682 /tmp/tmpmBovTC/ 5 4.00 1
+30 9679 /tmp/tmpmBovTC/ 9 2.70 1
+30 9673 /tmp/tmpmBovTC/ 5 3.50 1
+30 9677 /tmp/tmpmBovTC/ 4 3.20 1
+30 9667 /tmp/tmpmBovTC/ 10 3.00 1
+30 9680 /tmp/tmpmBovTC/ 4 3.20 1
+30 9669 /tmp/tmpmBovTC/ 8 3.20 1
+30 9670 /tmp/tmpmBovTC/ 6 3.00 1
+
+31 9676 /tmp/tmpmBovTC/ 6 4.20 1
+31 9674 /tmp/tmpmBovTC/ 8 4.00 1
+31 9672 /tmp/tmpmBovTC/ 5 4.00 1
+31 9685 /tmp/tmpmBovTC/ 3 1.80 1
+31 9668 /tmp/tmpmBovTC/ 5 4.00 1
+31 9678 /tmp/tmpmBovTC/ 10 3.00 1
+31 9675 /tmp/tmpmBovTC/ 10 3.00 1
+31 9681 /tmp/tmpmBovTC/ 5 3.50 1
+31 9682 /tmp/tmpmBovTC/ 5 4.00 1
+31 9679 /tmp/tmpmBovTC/ 10 3.00 1
+31 9673 /tmp/tmpmBovTC/ 5 3.50 1
+31 9677 /tmp/tmpmBovTC/ 4 3.20 1
+31 9667 /tmp/tmpmBovTC/ 10 3.00 1
+31 9680 /tmp/tmpmBovTC/ 4 3.20 1
+31 9669 /tmp/tmpmBovTC/ 9 3.60 1
+31 9670 /tmp/tmpmBovTC/ 7 3.50 1
+
+32 9676 /tmp/tmpmBovTC/ 6 4.20 1
+32 9674 /tmp/tmpmBovTC/ 8 4.00 1
+32 9672 /tmp/tmpmBovTC/ 5 4.00 1
+32 9685 /tmp/tmpmBovTC/ 3 1.80 1
+32 9668 /tmp/tmpmBovTC/ 5 4.00 1
+32 9678 /tmp/tmpmBovTC/ 10 3.00 1
+32 9675 /tmp/tmpmBovTC/ 10 3.00 1
+32 9681 /tmp/tmpmBovTC/ 5 3.50 1
+32 9682 /tmp/tmpmBovTC/ 5 4.00 1
+32 9679 /tmp/tmpmBovTC/ 10 3.00 1
+32 9673 /tmp/tmpmBovTC/ 5 3.50 1
+32 9677 /tmp/tmpmBovTC/ 5 4.00 1
+32 9667 /tmp/tmpmBovTC/ 11 3.30 1
+32 9680 /tmp/tmpmBovTC/ 4 3.20 1
+32 9669 /tmp/tmpmBovTC/ 9 3.60 1
+32 9670 /tmp/tmpmBovTC/ 7 3.50 1
+
+33 9676 /tmp/tmpmBovTC/ 6 4.20 1
+33 9674 /tmp/tmpmBovTC/ 8 4.00 1
+33 9672 /tmp/tmpmBovTC/ 5 4.00 1
+33 9685 /tmp/tmpmBovTC/ 3 1.80 1
+33 9668 /tmp/tmpmBovTC/ 5 4.00 1
+33 9678 /tmp/tmpmBovTC/ 10 3.00 1
+33 9675 /tmp/tmpmBovTC/ 10 3.00 1
+33 9681 /tmp/tmpmBovTC/ 5 3.50 1
+33 9682 /tmp/tmpmBovTC/ 6 4.80 1
+33 9679 /tmp/tmpmBovTC/ 11 3.30 1
+33 9673 /tmp/tmpmBovTC/ 5 3.50 1
+33 9677 /tmp/tmpmBovTC/ 5 4.00 1
+33 9667 /tmp/tmpmBovTC/ 11 3.30 1
+33 9680 /tmp/tmpmBovTC/ 5 4.00 1
+33 9669 /tmp/tmpmBovTC/ 9 3.60 1
+33 9670 /tmp/tmpmBovTC/ 7 3.50 1
+
+34 9676 /tmp/tmpmBovTC/ 6 4.20 1
+34 9674 /tmp/tmpmBovTC/ 8 4.00 1
+34 9672 /tmp/tmpmBovTC/ 5 4.00 1
+34 9685 /tmp/tmpmBovTC/ 4 2.40 1
+34 9668 /tmp/tmpmBovTC/ 5 4.00 1
+34 9678 /tmp/tmpmBovTC/ 11 3.30 1
+34 9675 /tmp/tmpmBovTC/ 11 3.30 1
+34 9681 /tmp/tmpmBovTC/ 6 4.20 1
+34 9682 /tmp/tmpmBovTC/ 6 4.80 1
+34 9679 /tmp/tmpmBovTC/ 11 3.30 1
+34 9673 /tmp/tmpmBovTC/ 5 3.50 1
+34 9677 /tmp/tmpmBovTC/ 5 4.00 1
+34 9667 /tmp/tmpmBovTC/ 11 3.30 1
+34 9680 /tmp/tmpmBovTC/ 5 4.00 1
+34 9669 /tmp/tmpmBovTC/ 9 3.60 1
+34 9670 /tmp/tmpmBovTC/ 7 3.50 1
+
+35 9676 /tmp/tmpmBovTC/ 6 4.20 1
+35 9674 /tmp/tmpmBovTC/ 9 4.50 1
+35 9672 /tmp/tmpmBovTC/ 6 4.80 1
+35 9685 /tmp/tmpmBovTC/ 4 2.40 1
+35 9668 /tmp/tmpmBovTC/ 6 4.80 1
+35 9678 /tmp/tmpmBovTC/ 11 3.30 1
+35 9675 /tmp/tmpmBovTC/ 11 3.30 1
+35 9681 /tmp/tmpmBovTC/ 6 4.20 1
+35 9682 /tmp/tmpmBovTC/ 6 4.80 1
+35 9679 /tmp/tmpmBovTC/ 12 3.60 1
+35 9673 /tmp/tmpmBovTC/ 6 4.20 1
+35 9677 /tmp/tmpmBovTC/ 5 4.00 1
+35 9667 /tmp/tmpmBovTC/ 12 3.60 1
+35 9680 /tmp/tmpmBovTC/ 5 4.00 1
+35 9669 /tmp/tmpmBovTC/ 10 4.00 1
+35 9670 /tmp/tmpmBovTC/ 8 4.00 1
+
+36 9676 /tmp/tmpmBovTC/ 7 4.90 1
+36 9674 /tmp/tmpmBovTC/ 9 4.50 1
+36 9672 /tmp/tmpmBovTC/ 6 4.80 1
+36 9685 /tmp/tmpmBovTC/ 4 2.40 1
+36 9668 /tmp/tmpmBovTC/ 6 4.80 1
+36 9678 /tmp/tmpmBovTC/ 11 3.30 1
+36 9675 /tmp/tmpmBovTC/ 11 3.30 1
+36 9681 /tmp/tmpmBovTC/ 6 4.20 1
+36 9682 /tmp/tmpmBovTC/ 6 4.80 1
+36 9679 /tmp/tmpmBovTC/ 13 3.90 1
+36 9673 /tmp/tmpmBovTC/ 6 4.20 1
+36 9677 /tmp/tmpmBovTC/ 6 4.80 1
+36 9667 /tmp/tmpmBovTC/ 12 3.60 1
+36 9680 /tmp/tmpmBovTC/ 5 4.00 1
+36 9669 /tmp/tmpmBovTC/ 10 4.00 1
+36 9670 /tmp/tmpmBovTC/ 8 4.00 1
+
+37 9676 /tmp/tmpmBovTC/ 7 4.90 1
+37 9674 /tmp/tmpmBovTC/ 9 4.50 1
+37 9672 /tmp/tmpmBovTC/ 6 4.80 1
+37 9685 /tmp/tmpmBovTC/ 4 2.40 1
+37 9668 /tmp/tmpmBovTC/ 6 4.80 1
+37 9678 /tmp/tmpmBovTC/ 12 3.60 1
+37 9675 /tmp/tmpmBovTC/ 12 3.60 1
+37 9681 /tmp/tmpmBovTC/ 6 4.20 1
+37 9682 /tmp/tmpmBovTC/ 6 4.80 1
+37 9679 /tmp/tmpmBovTC/ 13 3.90 1
+37 9673 /tmp/tmpmBovTC/ 6 4.20 1
+37 9677 /tmp/tmpmBovTC/ 6 4.80 1
+37 9667 /tmp/tmpmBovTC/ 12 3.60 1
+37 9680 /tmp/tmpmBovTC/ 5 4.00 1
+37 9669 /tmp/tmpmBovTC/ 10 4.00 1
+37 9670 /tmp/tmpmBovTC/ 8 4.00 1
+
+38 9676 /tmp/tmpmBovTC/ 7 4.90 1
+38 9674 /tmp/tmpmBovTC/ 9 4.50 1
+38 9672 /tmp/tmpmBovTC/ 6 4.80 1
+38 9685 /tmp/tmpmBovTC/ 4 2.40 1
+38 9668 /tmp/tmpmBovTC/ 6 4.80 1
+38 9678 /tmp/tmpmBovTC/ 12 3.60 1
+38 9675 /tmp/tmpmBovTC/ 12 3.60 1
+38 9681 /tmp/tmpmBovTC/ 6 4.20 1
+38 9682 /tmp/tmpmBovTC/ 7 5.60 1
+38 9679 /tmp/tmpmBovTC/ 13 3.90 1
+38 9673 /tmp/tmpmBovTC/ 6 4.20 1
+38 9677 /tmp/tmpmBovTC/ 6 4.80 1
+38 9667 /tmp/tmpmBovTC/ 13 3.90 1
+38 9680 /tmp/tmpmBovTC/ 6 4.80 1
+38 9669 /tmp/tmpmBovTC/ 11 4.40 1
+38 9670 /tmp/tmpmBovTC/ 9 4.50 1
+
+39 9676 /tmp/tmpmBovTC/ 7 4.90 1
+39 9674 /tmp/tmpmBovTC/ 10 5.00 1
+39 9672 /tmp/tmpmBovTC/ 6 4.80 1
+39 9685 /tmp/tmpmBovTC/ 5 3.00 1
+39 9668 /tmp/tmpmBovTC/ 6 4.80 1
+39 9678 /tmp/tmpmBovTC/ 13 3.90 1
+39 9675 /tmp/tmpmBovTC/ 12 3.60 1
+39 9681 /tmp/tmpmBovTC/ 6 4.20 1
+39 9682 /tmp/tmpmBovTC/ 7 5.60 1
+39 9679 /tmp/tmpmBovTC/ 13 3.90 1
+39 9673 /tmp/tmpmBovTC/ 6 4.20 1
+39 9677 /tmp/tmpmBovTC/ 6 4.80 1
+39 9667 /tmp/tmpmBovTC/ 13 3.90 1
+39 9680 /tmp/tmpmBovTC/ 6 4.80 1
+39 9669 /tmp/tmpmBovTC/ 11 4.40 1
+39 9670 /tmp/tmpmBovTC/ 9 4.50 1
+
+40 9676 /tmp/tmpmBovTC/ 7 4.90 1
+40 9674 /tmp/tmpmBovTC/ 10 5.00 1
+40 9672 /tmp/tmpmBovTC/ 6 4.80 1
+40 9685 /tmp/tmpmBovTC/ 5 3.00 1
+40 9668 /tmp/tmpmBovTC/ 7 5.60 1
+40 9678 /tmp/tmpmBovTC/ 13 3.90 1
+40 9675 /tmp/tmpmBovTC/ 13 3.90 1
+40 9681 /tmp/tmpmBovTC/ 7 4.90 1
+40 9682 /tmp/tmpmBovTC/ 7 5.60 1
+40 9679 /tmp/tmpmBovTC/ 14 4.20 1
+40 9673 /tmp/tmpmBovTC/ 6 4.20 1
+40 9677 /tmp/tmpmBovTC/ 6 4.80 1
+40 9667 /tmp/tmpmBovTC/ 13 3.90 1
+40 9680 /tmp/tmpmBovTC/ 6 4.80 1
+40 9669 /tmp/tmpmBovTC/ 11 4.40 1
+40 9670 /tmp/tmpmBovTC/ 9 4.50 1
+
+41 9676 /tmp/tmpmBovTC/ 8 5.60 1
+41 9674 /tmp/tmpmBovTC/ 10 5.00 1
+41 9672 /tmp/tmpmBovTC/ 6 4.80 1
+41 9685 /tmp/tmpmBovTC/ 5 3.00 1
+41 9668 /tmp/tmpmBovTC/ 7 5.60 1
+41 9678 /tmp/tmpmBovTC/ 13 3.90 1
+41 9675 /tmp/tmpmBovTC/ 13 3.90 1
+41 9681 /tmp/tmpmBovTC/ 7 4.90 1
+41 9682 /tmp/tmpmBovTC/ 7 5.60 1
+41 9679 /tmp/tmpmBovTC/ 14 4.20 1
+41 9673 /tmp/tmpmBovTC/ 6 4.20 1
+41 9677 /tmp/tmpmBovTC/ 6 4.80 1
+41 9667 /tmp/tmpmBovTC/ 13 3.90 1
+41 9680 /tmp/tmpmBovTC/ 6 4.80 1
+41 9669 /tmp/tmpmBovTC/ 11 4.40 1
+41 9670 /tmp/tmpmBovTC/ 9 4.50 1
+
+42 9676 /tmp/tmpmBovTC/ 8 5.60 1
+42 9674 /tmp/tmpmBovTC/ 10 5.00 1
+42 9672 /tmp/tmpmBovTC/ 7 5.60 1
+42 9685 /tmp/tmpmBovTC/ 5 3.00 1
+42 9668 /tmp/tmpmBovTC/ 7 5.60 1
+42 9678 /tmp/tmpmBovTC/ 13 3.90 1
+42 9675 /tmp/tmpmBovTC/ 13 3.90 1
+42 9681 /tmp/tmpmBovTC/ 7 4.90 1
+42 9682 /tmp/tmpmBovTC/ 7 5.60 1
+42 9679 /tmp/tmpmBovTC/ 14 4.20 1
+42 9673 /tmp/tmpmBovTC/ 7 4.90 1
+42 9677 /tmp/tmpmBovTC/ 6 4.80 1
+42 9667 /tmp/tmpmBovTC/ 14 4.20 1
+42 9680 /tmp/tmpmBovTC/ 7 5.60 1
+42 9669 /tmp/tmpmBovTC/ 11 4.40 1
+42 9670 /tmp/tmpmBovTC/ 9 4.50 1
+
+43 9676 /tmp/tmpmBovTC/ 8 5.60 1
+43 9674 /tmp/tmpmBovTC/ 10 5.00 1
+43 9672 /tmp/tmpmBovTC/ 7 5.60 1
+43 9685 /tmp/tmpmBovTC/ 5 3.00 1
+43 9668 /tmp/tmpmBovTC/ 7 5.60 1
+43 9678 /tmp/tmpmBovTC/ 13 3.90 1
+43 9675 /tmp/tmpmBovTC/ 14 4.20 1
+43 9681 /tmp/tmpmBovTC/ 7 4.90 1
+43 9682 /tmp/tmpmBovTC/ 7 5.60 1
+43 9679 /tmp/tmpmBovTC/ 14 4.20 1
+43 9673 /tmp/tmpmBovTC/ 7 4.90 1
+43 9677 /tmp/tmpmBovTC/ 6 4.80 1
+43 9667 /tmp/tmpmBovTC/ 14 4.20 1
+43 9680 /tmp/tmpmBovTC/ 7 5.60 1
+43 9669 /tmp/tmpmBovTC/ 11 4.40 1
+43 9670 /tmp/tmpmBovTC/ 9 4.50 1
+
+44 9676 /tmp/tmpmBovTC/ 8 5.60 1
+44 9674 /tmp/tmpmBovTC/ 10 5.00 1
+44 9672 /tmp/tmpmBovTC/ 7 5.60 1
+44 9685 /tmp/tmpmBovTC/ 5 3.00 1
+44 9668 /tmp/tmpmBovTC/ 7 5.60 1
+44 9678 /tmp/tmpmBovTC/ 14 4.20 1
+44 9675 /tmp/tmpmBovTC/ 14 4.20 1
+44 9681 /tmp/tmpmBovTC/ 7 4.90 1
+44 9682 /tmp/tmpmBovTC/ 7 5.60 1
+44 9679 /tmp/tmpmBovTC/ 15 4.50 1
+44 9673 /tmp/tmpmBovTC/ 7 4.90 1
+44 9677 /tmp/tmpmBovTC/ 7 5.60 1
+44 9
+
+test valgrind FAILED (0 of 6)
+ (essentially, manyclients2 run for longer and with valgrind)
+ Timelimit (65.0s) exceeded
+
+Skipped 0 tests.
+To keep testing after failing a test, use flag '-c' or '--continue'
+667 /tmp/tmpmBovTC/ 14 4.20 1
+44 9680 /tmp/tmpmBovTC/ 7 5.60 1
+44 9669 /tmp/tmpmBovTC/ 12 4.80 1
+44 9670 /tmp/tmpmBovTC/ 10 5.00 1
+
+45 9676 /tmp/tmpmBovTC/ 9 6.30 1
+45 9674 /tmp/tmpmBovTC/ 11 5.50 1
+45 9672 /tmp/tmpmBovTC/ 7 5.60 1
+45 9685 /tmp/tmpmBovTC/ 5 3.00 1
+45 9668 /tmp/tmpmBovTC/ 7 5.60 1
+45 9678 /tmp/tmpmBovTC/ 14 4.20 1
+45 9675 /tmp/tmpmBovTC/ 15 4.50 1
+45 9681 /tmp/tmpmBovTC/ 7 4.90 1
+45 9682 /tmp/tmpmBovTC/ 7 5.60 1
+45 9679 /tmp/tmpmBovTC/ 15 4.50 1
+45 9673 /tmp/tmpmBovTC/ 7 4.90 1
+45 9677 /tmp/tmpmBovTC/ 7 5.60 1
+45 9667 /tmp/tmpmBovTC/ 14 4.20 1
+45 9680 /tmp/tmpmBovTC/ 7 5.60 1
+45 9669 /tmp/tmpmBovTC/ 12 4.80 1
+45 9670 /tmp/tmpmBovTC/ 10 5.00 1
+
+46 9676 /tmp/tmpmBovTC/ 9 6.30 1
+46 9674 /tmp/tmpmBovTC/ 11 5.50 1
+46 9672 /tmp/tmpmBovTC/ 7 5.60 1
+46 9685 /tmp/tmpmBovTC/ 5 3.00 1
+46 9668 /tmp/tmpmBovTC/ 7 5.60 1
+46 9678 /tmp/tmpmBovTC/ 14 4.20 1
+46 9675 /tmp/tmpmBovTC/ 15 4.50 1
+46 9681 /tmp/tmpmBovTC/ 7 4.90 1
+46 9682 /tmp/tmpmBovTC/ 7 5.60 1
+46 9679 /tmp/tmpmBovTC/ 15 4.50 1
+46 9673 /tmp/tmpmBovTC/ 7 4.90 1
+46 9677 /tmp/tmpmBovTC/ 7 5.60 1
+46 9667 /tmp/tmpmBovTC/ 14 4.20 1
+46 9680 /tmp/tmpmBovTC/ 7 5.60 1
+46 9669 /tmp/tmpmBovTC/ 12 4.80 1
+46 9670 /tmp/tmpmBovTC/ 10 5.00 1
+
+47 9676 /tmp/tmpmBovTC/ 9 6.30 1
+47 9674 /tmp/tmpmBovTC/ 11 5.50 1
+47 9672 /tmp/tmpmBovTC/ 7 5.60 1
+47 9685 /tmp/tmpmBovTC/ 6 3.60 1
+47 9668 /tmp/tmpmBovTC/ 7 5.60 1
+47 9678 /tmp/tmpmBovTC/ 15 4.50 1
+47 9675 /tmp/tmpmBovTC/ 16 4.80 1
+47 9681 /tmp/tmpmBovTC/ 7 4.90 1
+47 9682 /tmp/tmpmBovTC/ 7 5.60 1
+47 9679 /tmp/tmpmBovTC/ 15 4.50 1
+47 9673 /tmp/tmpmBovTC/ 7 4.90 1
+47 9677 /tmp/tmpmBovTC/ 7 5.60 1
+47 9667 /tmp/tmpmBovTC/ 15 4.50 1
+47 9680 /tmp/tmpmBovTC/ 7 5.60 1
+47 9669 /tmp/tmpmBovTC/ 12 4.80 1
+47 9670 /tmp/tmpmBovTC/ 10 5.00 1
+
+48 9676 /tmp/tmpmBovTC/ 9 6.30 1
+48 9674 /tmp/tmpmBovTC/ 11 5.50 1
+48 9672 /tmp/tmpmBovTC/ 7 5.60 1
+48 9685 /tmp/tmpmBovTC/ 6 3.60 1
+48 9668 /tmp/tmpmBovTC/ 7 5.60 1
+48 9678 /tmp/tmpmBovTC/ 15 4.50 1
+48 9675 /tmp/tmpmBovTC/ 17 5.10 1
+48 9681 /tmp/tmpmBovTC/ 7 4.90 1
+48 9682 /tmp/tmpmBovTC/ 7 5.60 1
+48 9679 /tmp/tmpmBovTC/ 16 4.80 1
+48 9673 /tmp/tmpmBovTC/ 7 4.90 1
+48 9677 /tmp/tmpmBovTC/ 7 5.60 1
+48 9667 /tmp/tmpmBovTC/ 15 4.50 1
+48 9680 /tmp/tmpmBovTC/ 7 5.60 1
+48 9669 /tmp/tmpmBovTC/ 12 4.80 1
+48 9670 /tmp/tmpmBovTC/ 10 5.00 1
+
+49 9676 /tmp/tmpmBovTC/ 9 6.30 1
+49 9674 /tmp/tmpmBovTC/ 11 5.50 1
+49 9672 /tmp/tmpmBovTC/ 7 5.60 1
+49 9685 /tmp/tmpmBovTC/ 6 3.60 1
+49 9668 /tmp/tmpmBovTC/ 7 5.60 1
+49 9678 /tmp/tmpmBovTC/ 15 4.50 1
+49 9675 /tmp/tmpmBovTC/ 17 5.10 1
+49 9681 /tmp/tmpmBovTC/ 7 4.90 1
+49 9682 /tmp/tmpmBovTC/ 8 6.40 1
+49 9679 /tmp/tmpmBovTC/ 16 4.80 1
+49 9673 /tmp/tmpmBovTC/ 7 4.90 1
+49 9677 /tmp/tmpmBovTC/ 7 5.60 1
+49 9667 /tmp/tmpmBovTC/ 15 4.50 1
+49 9680 /tmp/tmpmBovTC/ 7 5.60 1
+49 9669 /tmp/tmpmBovTC/ 13 5.20 1
+49 9670 /tmp/tmpmBovTC/ 10 5.00 1
+
+50 9676 /tmp/tmpmBovTC/ 9 6.30 1
+50 9674 /tmp/tmpmBovTC/ 11 5.50 1
+50 9672 /tmp/tmpmBovTC/ 7 5.60 1
+50 9685 /tmp/tmpmBovTC/ 6 3.60 1
+50 9668 /tmp/tmpmBovTC/ 8 6.40 1
+50 9678 /tmp/tmpmBovTC/ 15 4.50 1
+50 9675 /tmp/tmpmBovTC/ 17 5.10 1
+50 9681 /tmp/tmpmBovTC/ 8 5.60 1
+50 9682 /tmp/tmpmBovTC/ 8 6.40 1
+50 9679 /tmp/tmpmBovTC/ 16 4.80 1
+50 9673 /tmp/tmpmBovTC/ 7 4.90 1
+50 9677 /tmp/tmpmBovTC/ 7 5.60 1
+50 9667 /tmp/tmpmBovTC/ 15 4.50 1
+50 9680 /tmp/tmpmBovTC/ 7 5.60 1
+50 9669 /tmp/tmpmBovTC/ 13 5.20 1
+50 9670 /tmp/tmpmBovTC/ 11 5.50 1
+
+51 9676 /tmp/tmpmBovTC/ 9 6.30 1
+51 9674 /tmp/tmpmBovTC/ 11 5.50 1
+51 9672 /tmp/tmpmBovTC/ 7 5.60 1
+51 9685 /tmp/tmpmBovTC/ 6 3.60 1
+51 9668 /tmp/tmpmBovTC/ 8 6.40 1
+51 9678 /tmp/tmpmBovTC/ 15 4.50 1
+51 9675 /tmp/tmpmBovTC/ 18 5.40 1
+51 9681 /tmp/tmpmBovTC/ 8 5.60 1
+51 9682 /tmp/tmpmBovTC/ 8 6.40 1
+51 9679 /tmp/tmpmBovTC/ 16 4.80 1
+51 9673 /tmp/tmpmBovTC/ 8 5.60 1
+51 9677 /tmp/tmpmBovTC/ 7 5.60 1
+51 9667 /tmp/tmpmBovTC/ 15 4.50 1
+51 9680 /tmp/tmpmBovTC/ 7 5.60 1
+51 9669 /tmp/tmpmBovTC/ 13 5.20 1
+51 9670 /tmp/tmpmBovTC/ 11 5.50 1
+

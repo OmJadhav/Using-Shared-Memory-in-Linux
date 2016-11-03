@@ -1,3 +1,6 @@
+~cs537-1/ta/tests/3a/runtests
+
+
 only a single client is (usually) writing to each memory location and the server is only reading (not writing)
 
 if the server happens to occasionally read data that is not up-to-date, that is okay, since the data is just usage statistics (and not your bank account). The only time you will need to worry about mutual exclusion will be when clients are first starting and when they exit.

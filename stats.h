@@ -14,7 +14,7 @@ typedef struct {
 } stats_t;
 
 extern int test();
-extern stats_t* stat_init(key_t key);
-extern int stat_unlink(key_t key);
+extern stats_t* stats_init(key_t key);
+extern int stats_unlink(key_t key);
  
 #endif
